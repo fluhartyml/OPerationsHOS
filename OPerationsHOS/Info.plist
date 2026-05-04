@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSContactsUsageDescription</key>
+	<string>OPerationsHOS uses Contacts to let you pick people you want to track as records — vendors, contractors, family, anyone whose context belongs in your operating system.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

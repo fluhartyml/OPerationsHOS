@@ -1,4 +1,5 @@
 import SwiftUI
+import Contacts
 
 struct RecordEditSheet: View {
     enum Mode {
@@ -18,6 +19,10 @@ struct RecordEditSheet: View {
     @State private var bodyText: String = ""
     @State private var tagsText: String = ""
     @State private var pinned: Bool = false
+    @State private var contactIdentifier: String = ""
+
+    @State private var contactsAccess = ContactsAccess()
+    @State private var showingPicker = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -26,6 +31,14 @@ struct RecordEditSheet: View {
             Form {
                 Section {
                     TextField("Title", text: $title)
+                    if type == .person {
+                        Button {
+                            requestContactsAndPresent()
+                        } label: {
+                            Label(contactIdentifier.isEmpty ? "Pick from Contacts" : "Change Contact",
+                                  systemImage: "person.crop.circle.badge.plus")
+                        }
+                    }
                 }
 
                 Section {
@@ -78,7 +91,19 @@ struct RecordEditSheet: View {
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
-            .onAppear { loadIfEditing() }
+            #if os(iOS)
+            .sheet(isPresented: $showingPicker) {
+                PersonPickerView { contact in
+                    title = displayName(for: contact)
+                    contactIdentifier = contact.identifier
+                    showingPicker = false
+                }
+            }
+            #endif
+            .onAppear {
+                loadIfEditing()
+                contactsAccess.refreshAuth()
+            }
         }
     }
 
@@ -100,7 +125,21 @@ struct RecordEditSheet: View {
             bodyText = existing.body
             tagsText = existing.tags.joined(separator: ", ")
             pinned = existing.pinned
+            contactIdentifier = existing.source ?? ""
         }
+    }
+
+    private func requestContactsAndPresent() {
+        #if os(iOS)
+        Task {
+            if contactsAccess.authState != .authorized {
+                await contactsAccess.requestAccess()
+            }
+            if contactsAccess.authState == .authorized {
+                showingPicker = true
+            }
+        }
+        #endif
     }
 
     private func save() {
@@ -112,6 +151,8 @@ struct RecordEditSheet: View {
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
 
+        let storedSource: String? = contactIdentifier.isEmpty ? nil : contactIdentifier
+
         switch mode {
         case .new:
             let newItem = OperatorItem(
@@ -122,7 +163,8 @@ struct RecordEditSheet: View {
                 priority: priority,
                 dueDate: hasDueDate ? dueDate : nil,
                 pinned: pinned,
-                tags: parsedTags
+                tags: parsedTags,
+                source: storedSource
             )
             store.add(newItem)
 
@@ -136,6 +178,7 @@ struct RecordEditSheet: View {
             existing.dueDate = hasDueDate ? dueDate : nil
             existing.pinned = pinned
             existing.tags = parsedTags
+            existing.source = storedSource
             store.update(existing)
         }
         dismiss()
