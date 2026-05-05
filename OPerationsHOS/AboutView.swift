@@ -52,7 +52,7 @@ struct AboutView: View {
             }
 
             Section("Credits") {
-                Text("Architected by ChatGPT. Implemented by Claude. Operated by Michael.")
+                Text("Engineered by Claude, operated by Michael L. Fluharty")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
