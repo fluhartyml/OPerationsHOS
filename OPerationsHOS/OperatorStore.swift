@@ -110,6 +110,53 @@ final class OperatorStore {
         refresh()
     }
 
+    // MARK: - Timers
+
+    func startTimer(id: UUID) {
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        guard target.type == .timer else { return }
+        if target.runningSince == nil {
+            target.runningSince = Date()
+            target.updatedDate = Date()
+            try? modelContext.save()
+            refresh()
+        }
+    }
+
+    func stopTimer(id: UUID) {
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        guard target.type == .timer else { return }
+        if let started = target.runningSince {
+            target.accumulatedSeconds += Date().timeIntervalSince(started)
+            target.runningSince = nil
+            target.updatedDate = Date()
+            try? modelContext.save()
+            refresh()
+        }
+    }
+
+    func resetTimer(id: UUID) {
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        guard target.type == .timer else { return }
+        target.accumulatedSeconds = 0
+        target.runningSince = nil
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
+    func linkTimer(_ timerID: UUID, toRecord recordID: UUID?) {
+        guard let target = items.first(where: { $0.id == timerID }) else { return }
+        target.linkedRecordID = recordID
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
+    func runningTimers() -> [OperatorItem] {
+        items.filter { $0.type == .timer && $0.runningSince != nil && !$0.archived }
+    }
+
     // MARK: - Section semantics
     //
     // Pin = "show on dashboard."

@@ -91,6 +91,9 @@ struct RecordDetailView: View {
                     contactDetails(for: contact)
                 }
                 metadata(for: item)
+                if item.type == .timer {
+                    timerSection(for: item)
+                }
                 if !item.body.isEmpty {
                     bodySection(for: item)
                 }
@@ -416,6 +419,10 @@ struct RecordDetailView: View {
                 await MainActor.run { photoItem = nil }
             }
         }
+    }
+
+    private func timerSection(for item: OperatorItem) -> some View {
+        TimerSectionView(item: item, store: store)
     }
 
     @ViewBuilder

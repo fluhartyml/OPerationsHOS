@@ -19,6 +19,11 @@ final class OperatorItem {
     var relatedSystem: String?
     var source: String?
 
+    // Phase 12 — Timer / Workflow
+    var accumulatedSeconds: Double = 0
+    var runningSince: Date?
+    var linkedRecordID: UUID?
+
     @Relationship(deleteRule: .cascade, inverse: \Attachment.owner)
     var attachments: [Attachment]? = []
 
