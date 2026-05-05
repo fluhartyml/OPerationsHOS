@@ -135,6 +135,35 @@ final class OperatorStore {
         }
     }
 
+    /// Records due strictly today (not overdue).
+    var scheduleToday: [OperatorItem] {
+        let cal = Calendar.current
+        return items.filter { item in
+            guard !item.archived else { return false }
+            guard let due = item.dueDate else { return false }
+            return cal.isDateInToday(due)
+        }
+        .sorted { ($0.dueDate ?? .distantPast) < ($1.dueDate ?? .distantPast) }
+    }
+
+    /// Records whose due date has passed.
+    var expired: [OperatorItem] {
+        let cal = Calendar.current
+        return items.filter { item in
+            guard !item.archived else { return false }
+            guard item.status != .complete else { return false }
+            guard let due = item.dueDate else { return false }
+            return due < Date() && !cal.isDateInToday(due)
+        }
+        .sorted { ($0.dueDate ?? .distantPast) > ($1.dueDate ?? .distantPast) }
+    }
+
+    /// Records with status == .waiting (regardless of date).
+    var waiting: [OperatorItem] {
+        items.filter { !$0.archived && $0.status == .waiting }
+            .sorted { $0.updatedDate > $1.updatedDate }
+    }
+
     /// Top-level Pinned section: pinned records whose type doesn't have its own typed section.
     var topLevelPinned: [OperatorItem] {
         items.filter {

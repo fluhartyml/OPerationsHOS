@@ -4,6 +4,7 @@ struct RootTabView: View {
     let store: OperatorStore
 
     @State private var dashboardSheet = false
+    @State private var scheduleSheet = false
     @State private var vaultSheet = false
     @State private var systemsSheet = false
     @State private var maintenanceSheet = false
@@ -17,6 +18,10 @@ struct RootTabView: View {
         TabView {
             tab("Dashboard", "rectangle.grid.2x2", sheet: $dashboardSheet) {
                 DashboardView(store: store, showingNewRecord: $dashboardSheet)
+            }
+
+            tab("Schedule", "calendar", sheet: $scheduleSheet) {
+                ScheduleView(store: store, showingNewRecord: $scheduleSheet)
             }
 
             tab("Vault", "tray.full", sheet: $vaultSheet) {
