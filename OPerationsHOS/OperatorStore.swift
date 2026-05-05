@@ -45,10 +45,20 @@ final class OperatorStore {
         items[index].updatedDate = Date()
     }
 
-    // MARK: - Slices
+    // MARK: - Section semantics
+    //
+    // Pin = "show on dashboard."
+    // Date = "show on date sections regardless of pin."
+    // Sparse rule = if a typed section has fewer than 2 pinned records,
+    //               include the unpinned ones too so the section isn't empty/lonely.
+    // Inbox = unpinned, undated, not surfaced anywhere else.
 
-    var pinned: [OperatorItem] {
-        items.filter { $0.pinned && !$0.archived }
+    private static let typedSectionTypes: Set<ItemType> = [.appliance, .homeSystem, .person, .project]
+
+    private func typedSection(of types: Set<ItemType>) -> [OperatorItem] {
+        let inScope = items.filter { !$0.archived && types.contains($0.type) }
+        let pinned = inScope.filter { $0.pinned }
+        return pinned.count < 2 ? inScope : pinned
     }
 
     var today: [OperatorItem] {
@@ -58,6 +68,25 @@ final class OperatorStore {
             guard let due = item.dueDate else { return false }
             return cal.isDateInToday(due) || due < Date()
         }
+    }
+
+    /// Top-level Pinned section: pinned records whose type doesn't have its own typed section.
+    var topLevelPinned: [OperatorItem] {
+        items.filter {
+            $0.pinned && !$0.archived && !Self.typedSectionTypes.contains($0.type)
+        }
+    }
+
+    var homeSystems: [OperatorItem] {
+        typedSection(of: [.appliance, .homeSystem])
+    }
+
+    var people: [OperatorItem] {
+        typedSection(of: [.person])
+    }
+
+    var projects: [OperatorItem] {
+        typedSection(of: [.project])
     }
 
     var upcoming: [OperatorItem] {
@@ -72,23 +101,27 @@ final class OperatorStore {
             .sorted { ($0.dueDate ?? .distantFuture) < ($1.dueDate ?? .distantFuture) }
     }
 
-    var homeSystems: [OperatorItem] {
-        items.filter { !$0.archived && ($0.type == .homeSystem || $0.type == .appliance) }
-    }
-
-    var projects: [OperatorItem] {
-        items.filter { !$0.archived && $0.type == .project }
-    }
-
-    var people: [OperatorItem] {
-        items.filter { !$0.archived && $0.type == .person }
-    }
-
     var recentlyUpdated: [OperatorItem] {
         items
             .filter { !$0.archived }
             .sorted { $0.updatedDate > $1.updatedDate }
             .prefix(5)
             .map { $0 }
+    }
+
+    /// Inbox: orphans — unpinned, undated, and not surfaced in any typed/pinned section.
+    var inbox: [OperatorItem] {
+        let surfaced: Set<UUID> = Set(
+            homeSystems.map { $0.id }
+            + people.map { $0.id }
+            + projects.map { $0.id }
+            + topLevelPinned.map { $0.id }
+        )
+        return items.filter { item in
+            guard !item.archived else { return false }
+            guard !item.pinned else { return false }
+            guard item.dueDate == nil else { return false }
+            return !surfaced.contains(item.id)
+        }
     }
 }

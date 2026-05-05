@@ -8,12 +8,13 @@ struct DashboardView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: AppTheme.sectionSpacing) {
                 section("Today", items: store.today)
-                section("Pinned", items: store.pinned)
+                section("Pinned", items: store.topLevelPinned)
                 section("Home Systems", items: store.homeSystems)
                 section("People", items: store.people)
-                section("Upcoming", items: store.upcoming)
                 section("Projects", items: store.projects)
+                section("Upcoming", items: store.upcoming)
                 section("Recently Updated", items: store.recentlyUpdated)
+                section("Inbox", items: store.inbox)
             }
             .padding()
         }
