@@ -9,6 +9,7 @@ struct RecordEditSheet: View {
 
     let mode: Mode
     let store: OperatorStore
+    let defaultType: ItemType?
 
     @State private var title: String = ""
     @State private var type: ItemType = .note
@@ -24,6 +25,15 @@ struct RecordEditSheet: View {
     @State private var contactsAccess = ContactsAccess()
 
     @Environment(\.dismiss) private var dismiss
+
+    init(mode: Mode, store: OperatorStore, defaultType: ItemType? = nil) {
+        self.mode = mode
+        self.store = store
+        self.defaultType = defaultType
+        if let defaultType {
+            _type = State(initialValue: defaultType)
+        }
+    }
 
     var body: some View {
         NavigationStack {

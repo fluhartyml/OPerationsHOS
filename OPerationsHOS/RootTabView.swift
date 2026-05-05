@@ -17,15 +17,15 @@ struct RootTabView: View {
 
     var body: some View {
         TabView {
-            tab("Dashboard", "rectangle.grid.2x2", sheet: $dashboardSheet) {
+            tab("Dashboard", "rectangle.grid.2x2", sheet: $dashboardSheet, defaultType: nil) {
                 DashboardView(store: store, showingNewRecord: $dashboardSheet)
             }
 
-            tab("Schedule", "calendar", sheet: $scheduleSheet) {
+            tab("Schedule", "calendar", sheet: $scheduleSheet, defaultType: nil) {
                 ScheduleView(store: store, showingNewRecord: $scheduleSheet)
             }
 
-            tab("Vault", "tray.full", sheet: $vaultSheet) {
+            tab("Vault", "tray.full", sheet: $vaultSheet, defaultType: nil) {
                 ModuleView(
                     title: "Vault",
                     symbol: "tray.full",
@@ -35,7 +35,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("Systems", "house", sheet: $systemsSheet) {
+            tab("Systems", "house", sheet: $systemsSheet, defaultType: .homeSystem) {
                 ModuleView(
                     title: "Systems",
                     symbol: "house",
@@ -45,7 +45,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("Maintenance", "wrench.and.screwdriver", sheet: $maintenanceSheet) {
+            tab("Maintenance", "wrench.and.screwdriver", sheet: $maintenanceSheet, defaultType: .maintenance) {
                 ModuleView(
                     title: "Maintenance",
                     symbol: "wrench.and.screwdriver",
@@ -55,7 +55,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("Projects", "square.stack.3d.up", sheet: $projectsSheet) {
+            tab("Projects", "square.stack.3d.up", sheet: $projectsSheet, defaultType: .project) {
                 ModuleView(
                     title: "Projects",
                     symbol: "square.stack.3d.up",
@@ -65,7 +65,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("People", "person.crop.circle", sheet: $peopleSheet) {
+            tab("People", "person.crop.circle", sheet: $peopleSheet, defaultType: .person) {
                 ModuleView(
                     title: "People",
                     symbol: "person.crop.circle",
@@ -75,7 +75,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("Timers", "timer", sheet: $timersSheet) {
+            tab("Timers", "timer", sheet: $timersSheet, defaultType: .timer) {
                 ModuleView(
                     title: "Timers",
                     symbol: "timer",
@@ -85,7 +85,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("Media", "photo", sheet: $mediaSheet) {
+            tab("Media", "photo", sheet: $mediaSheet, defaultType: .media) {
                 ModuleView(
                     title: "Media",
                     symbol: "photo",
@@ -95,7 +95,7 @@ struct RootTabView: View {
                 )
             }
 
-            tab("Property", "building.2", sheet: $propertySheet) {
+            tab("Property", "building.2", sheet: $propertySheet, defaultType: .property) {
                 ModuleView(
                     title: "Property",
                     symbol: "building.2",
@@ -120,6 +120,7 @@ struct RootTabView: View {
         _ title: String,
         _ symbol: String,
         sheet: Binding<Bool>,
+        defaultType: ItemType?,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
         NavigationStack {
@@ -132,7 +133,7 @@ struct RootTabView: View {
             Label(title, systemImage: symbol)
         }
         .sheet(isPresented: sheet) {
-            RecordEditSheet(mode: .new, store: store)
+            RecordEditSheet(mode: .new, store: store, defaultType: defaultType)
         }
     }
 }
