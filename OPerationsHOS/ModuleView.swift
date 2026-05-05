@@ -7,16 +7,38 @@ struct ModuleView: View {
     let store: OperatorStore
     @Binding var showingNewRecord: Bool
 
-    var items: [OperatorItem] {
+    @State private var searchText: String = ""
+
+    private var scopedItems: [OperatorItem] {
         let live = store.items.filter { !$0.archived }
-        let scoped: [OperatorItem]
         switch scope {
         case .all:
-            scoped = live
+            return live
         case .types(let allowed):
-            scoped = live.filter { allowed.contains($0.type) }
+            return live.filter { allowed.contains($0.type) }
         }
-        return scoped.sorted { $0.updatedDate > $1.updatedDate }
+    }
+
+    var items: [OperatorItem] {
+        let trimmed = searchText.trimmingCharacters(in: .whitespaces).lowercased()
+        let filtered: [OperatorItem]
+        if trimmed.isEmpty {
+            filtered = scopedItems
+        } else {
+            filtered = scopedItems.filter { matches($0, query: trimmed) }
+        }
+        return filtered.sorted { $0.updatedDate > $1.updatedDate }
+    }
+
+    private func matches(_ item: OperatorItem, query: String) -> Bool {
+        if item.title.lowercased().contains(query) { return true }
+        if item.subtitle.lowercased().contains(query) { return true }
+        if item.body.lowercased().contains(query) { return true }
+        if item.type.label.lowercased().contains(query) { return true }
+        if item.status.label.lowercased().contains(query) { return true }
+        if let system = item.relatedSystem, system.lowercased().contains(query) { return true }
+        if item.tags.contains(where: { $0.lowercased().contains(query) }) { return true }
+        return false
     }
 
     var body: some View {
@@ -31,6 +53,7 @@ struct ModuleView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search \(title)")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { showingNewRecord = true } label: {
@@ -74,17 +97,24 @@ struct ModuleView: View {
     }
 
     private var empty: some View {
-        ContentUnavailableView {
-            Label("Nothing in \(title) yet", systemImage: symbol)
-        } description: {
-            Text(emptyMessage)
-        } actions: {
-            Button {
-                showingNewRecord = true
-            } label: {
-                Label("New Record", systemImage: "plus")
+        let trimmedQuery = searchText.trimmingCharacters(in: .whitespaces)
+        return Group {
+            if !trimmedQuery.isEmpty {
+                ContentUnavailableView.search(text: trimmedQuery)
+            } else {
+                ContentUnavailableView {
+                    Label("Nothing in \(title) yet", systemImage: symbol)
+                } description: {
+                    Text(emptyMessage)
+                } actions: {
+                    Button {
+                        showingNewRecord = true
+                    } label: {
+                        Label("New Record", systemImage: "plus")
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
             }
-            .buttonStyle(.borderedProminent)
         }
     }
 
