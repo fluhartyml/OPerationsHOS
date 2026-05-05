@@ -22,7 +22,6 @@ struct RecordEditSheet: View {
     @State private var contactIdentifier: String = ""
 
     @State private var contactsAccess = ContactsAccess()
-    @State private var showingPicker = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -91,15 +90,6 @@ struct RecordEditSheet: View {
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
-            #if os(iOS)
-            .sheet(isPresented: $showingPicker) {
-                PersonPickerView { contact in
-                    title = displayName(for: contact)
-                    contactIdentifier = contact.identifier
-                    showingPicker = false
-                }
-            }
-            #endif
             .onAppear {
                 loadIfEditing()
                 contactsAccess.refreshAuth()
@@ -135,8 +125,10 @@ struct RecordEditSheet: View {
             if contactsAccess.authState != .authorized {
                 await contactsAccess.requestAccess()
             }
-            if contactsAccess.authState == .authorized {
-                showingPicker = true
+            guard contactsAccess.authState == .authorized else { return }
+            PickerPresenter.shared.present { contact in
+                title = displayName(for: contact)
+                contactIdentifier = contact.identifier
             }
         }
         #endif

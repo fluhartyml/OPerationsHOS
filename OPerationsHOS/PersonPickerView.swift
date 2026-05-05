@@ -2,27 +2,37 @@ import SwiftUI
 import Contacts
 
 #if os(iOS)
+import UIKit
 import ContactsUI
 
-struct PersonPickerView: UIViewControllerRepresentable {
-    let onPick: (CNContact) -> Void
+@MainActor
+final class PickerPresenter: NSObject, CNContactPickerDelegate {
+    static let shared = PickerPresenter()
+    private var onPick: ((CNContact) -> Void)?
 
-    func makeUIViewController(context: Context) -> CNContactPickerViewController {
+    func present(onPick: @escaping (CNContact) -> Void) {
+        self.onPick = onPick
+
         let picker = CNContactPickerViewController()
-        picker.delegate = context.coordinator
-        return picker
+        picker.delegate = self
+
+        guard let scene = UIApplication.shared.connectedScenes
+                .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+              let window = scene.windows.first(where: \.isKeyWindow),
+              let root = window.rootViewController else { return }
+
+        var top = root
+        while let presented = top.presentedViewController { top = presented }
+        top.present(picker, animated: true)
     }
 
-    func updateUIViewController(_ uiViewController: CNContactPickerViewController, context: Context) {}
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
+        onPick?(contact)
+        onPick = nil
+    }
 
-    func makeCoordinator() -> Coordinator { Coordinator(onPick: onPick) }
-
-    final class Coordinator: NSObject, CNContactPickerDelegate {
-        let onPick: (CNContact) -> Void
-        init(onPick: @escaping (CNContact) -> Void) { self.onPick = onPick }
-        func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact) {
-            onPick(contact)
-        }
+    func contactPickerDidCancel(_ picker: CNContactPickerViewController) {
+        onPick = nil
     }
 }
 #endif
@@ -36,11 +46,16 @@ final class ContactsAccess {
     private let store = CNContactStore()
 
     func refreshAuth() {
-        switch CNContactStore.authorizationStatus(for: .contacts) {
+        let status = CNContactStore.authorizationStatus(for: .contacts)
+        switch status {
         case .authorized: authState = .authorized
         case .denied, .restricted: authState = .denied
         case .notDetermined: authState = .notDetermined
-        @unknown default: authState = .unknown
+        @unknown default:
+            // .limited (iOS 18+) and any future cases — treat as authorized
+            // since the user has granted some level of access and the picker
+            // can still present.
+            authState = .authorized
         }
     }
 
@@ -62,3 +77,30 @@ func displayName(for contact: CNContact) -> String {
     let combined = "\(contact.givenName) \(contact.familyName)".trimmingCharacters(in: .whitespaces)
     return combined.isEmpty ? "Unnamed" : combined
 }
+
+#if os(macOS)
+struct PersonManualEntrySheet: View {
+    let onSave: (String) -> Void
+    @State private var name: String = ""
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Add Person").font(.headline)
+            TextField("Name", text: $name).textFieldStyle(.roundedBorder)
+            HStack {
+                Button("Cancel") { dismiss() }
+                Spacer()
+                Button("Save") {
+                    onSave(name)
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+                .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+        .padding()
+        .frame(width: 320)
+    }
+}
+#endif
