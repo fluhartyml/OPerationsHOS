@@ -19,6 +19,9 @@ final class OperatorItem {
     var relatedSystem: String?
     var source: String?
 
+    @Relationship(deleteRule: .cascade, inverse: \Attachment.owner)
+    var attachments: [Attachment]? = []
+
     init(
         id: UUID = UUID(),
         title: String,

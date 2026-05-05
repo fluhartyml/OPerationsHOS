@@ -6,6 +6,7 @@ struct OPerationsHOSApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             OperatorItem.self,
+            Attachment.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

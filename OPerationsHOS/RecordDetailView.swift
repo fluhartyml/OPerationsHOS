@@ -1,5 +1,9 @@
 import SwiftUI
+import SwiftData
+import PhotosUI
 import Contacts
+import QuickLook
+import UniformTypeIdentifiers
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -11,6 +15,9 @@ struct RecordDetailView: View {
     let store: OperatorStore
 
     @State private var showingEdit = false
+    @State private var showingDocumentPicker = false
+    @State private var photoItem: PhotosPickerItem?
+    @State private var quickLookURL: URL?
     @Environment(\.dismiss) private var dismiss
 
     private var item: OperatorItem? {
@@ -90,9 +97,23 @@ struct RecordDetailView: View {
                 if !item.tags.isEmpty {
                     tagsSection(for: item)
                 }
+                attachmentsSection(for: item)
                 placeholders
             }
             .padding()
+        }
+        #if os(iOS)
+        .fileImporter(
+            isPresented: $showingDocumentPicker,
+            allowedContentTypes: [.pdf, .image, .data],
+            allowsMultipleSelection: true
+        ) { result in
+            handleDocumentImport(result, into: item)
+        }
+        .quickLookPreview($quickLookURL)
+        #endif
+        .onChange(of: photoItem) { _, newItem in
+            handlePhotoPick(newItem, into: item)
         }
     }
 
@@ -284,9 +305,121 @@ struct RecordDetailView: View {
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
     }
 
+    @ViewBuilder
+    private func attachmentsSection(for item: OperatorItem) -> some View {
+        let attachments = (item.attachments ?? []).sorted { $0.createdDate > $1.createdDate }
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Attachments").font(.headline)
+                Spacer()
+                Menu {
+                    PhotosPicker(selection: $photoItem, matching: .images) {
+                        Label("Photo", systemImage: "photo")
+                    }
+                    Button {
+                        showingDocumentPicker = true
+                    } label: {
+                        Label("File", systemImage: "doc")
+                    }
+                } label: {
+                    Label("Add", systemImage: "plus.circle")
+                        .labelStyle(.iconOnly)
+                        .font(.title3)
+                }
+            }
+            if attachments.isEmpty {
+                Text("No attachments yet. Tap + to add a photo or file.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(attachments) { attachment in
+                    attachmentRow(attachment)
+                }
+            }
+        }
+        .padding(AppTheme.cardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
+    }
+
+    private func attachmentRow(_ attachment: Attachment) -> some View {
+        Button {
+            quickLookURL = AttachmentStorage.url(for: attachment.filename)
+        } label: {
+            HStack {
+                Image(systemName: attachment.kind.symbol)
+                    .foregroundStyle(.tint)
+                    .frame(width: 22)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(attachment.originalName.isEmpty ? attachment.filename : attachment.originalName)
+                        .font(.body)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Text(attachment.kind.label)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            Button(role: .destructive) {
+                deleteAttachment(attachment)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+    }
+
+    private func deleteAttachment(_ attachment: Attachment) {
+        AttachmentStorage.delete(filename: attachment.filename)
+        store.deleteAttachment(attachment)
+    }
+
+    private func handleDocumentImport(_ result: Result<[URL], Error>, into item: OperatorItem) {
+        guard case let .success(urls) = result else { return }
+        for url in urls {
+            do {
+                let info = try AttachmentStorage.copy(from: url)
+                let attachment = Attachment(
+                    filename: info.filename,
+                    originalName: info.originalName,
+                    kind: AttachmentStorage.kind(for: url)
+                )
+                store.attach(attachment, to: item)
+            } catch {
+                continue
+            }
+        }
+    }
+
+    private func handlePhotoPick(_ pickerItem: PhotosPickerItem?, into item: OperatorItem) {
+        guard let pickerItem else { return }
+        Task {
+            do {
+                guard let data = try await pickerItem.loadTransferable(type: Data.self) else { return }
+                let info = try AttachmentStorage.write(data: data, suggestedExtension: "jpg")
+                let attachment = Attachment(
+                    filename: info.filename,
+                    originalName: info.originalName,
+                    kind: .image
+                )
+                await MainActor.run {
+                    store.attach(attachment, to: item)
+                    photoItem = nil
+                }
+            } catch {
+                await MainActor.run { photoItem = nil }
+            }
+        }
+    }
+
     private var placeholders: some View {
         VStack(alignment: .leading, spacing: 12) {
-            placeholder("Attachments", "Will arrive in Phase 9")
             placeholder("Activity Log", "Will arrive in Phase 10")
         }
     }

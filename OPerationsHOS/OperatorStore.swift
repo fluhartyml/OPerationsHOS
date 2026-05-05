@@ -68,6 +68,31 @@ final class OperatorStore {
         refresh()
     }
 
+    // MARK: - Attachments
+
+    func attach(_ attachment: Attachment, to item: OperatorItem) {
+        modelContext.insert(attachment)
+        attachment.owner = item
+        if item.attachments == nil {
+            item.attachments = [attachment]
+        } else {
+            item.attachments?.append(attachment)
+        }
+        item.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
+    func deleteAttachment(_ attachment: Attachment) {
+        if let owner = attachment.owner {
+            owner.attachments?.removeAll { $0.id == attachment.id }
+            owner.updatedDate = Date()
+        }
+        modelContext.delete(attachment)
+        try? modelContext.save()
+        refresh()
+    }
+
     // MARK: - Section semantics
     //
     // Pin = "show on dashboard."
