@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>OPerationsHOS-Shakedown</title>
 <style>
-  :root { --amber:#FFB000; --amber-bright:#FFCC33; --amber-dim:#A06000; --amber-faint:#5C3800; --green:#33FF33; --green-dim:#00AA00; --green-faint:#006600; --bg:#0a0500; --bg-cell:#160a00; --bg-scaffold:#001000; }
+  :root { --amber:#FFB000; --amber-bright:#FFCC33; --amber-dim:#A06000; --amber-faint:#5C3800; --green:#33FF33; --green-dim:#00AA00; --green-faint:#006600; --bg:#0a0500; --bg-cell:#160a00; --bg-scaffold:#001000; --fail:#FF4040; --block:#7AB8FF; }
   html,body{background:var(--bg);}
   body{font-family:"JetBrainsMono Nerd Font","JetBrainsMono NF","FiraCode Nerd Font","FiraCode NF","Hack Nerd Font","Hack NF","MesloLGS NF","SauceCodePro Nerd Font","Cascadia Code","SF Mono",Menlo,Consolas,ui-monospace,monospace;font-size:18px;line-height:1.55;max-width:1100px;margin:32px auto;padding:0 24px;color:var(--amber);text-shadow:0 0 1px rgba(255,176,0,0.35);}
   .filename-header,.filename-footer{font-family:inherit;font-size:18px;background:var(--bg-scaffold);color:var(--green);padding:10px 16px;border:1px solid var(--green-dim);border-radius:6px;margin-bottom:24px;text-shadow:0 0 1px rgba(51,255,51,0.35);}
@@ -12,6 +12,10 @@
   ol.lines{list-style:none;counter-reset:line;padding-left:0;}
   ol.lines>li{counter-increment:line;padding:2px 0 2px 60px;position:relative;min-height:1.55em;}
   ol.lines>li::before{content:counter(line);position:absolute;left:0;width:48px;text-align:right;color:var(--green-dim);font-size:14px;padding-right:8px;border-right:1px solid var(--green-faint);user-select:none;text-shadow:0 0 1px rgba(51,255,51,0.35);}
+  /* State colors — applied to <li>; line numbers stay green */
+  ol.lines>li.pass{color:var(--green);text-shadow:0 0 1px rgba(51,255,51,0.35);}
+  ol.lines>li.fail{color:var(--fail);text-shadow:0 0 1px rgba(255,64,64,0.35);}
+  ol.lines>li.block{color:var(--block);text-shadow:0 0 1px rgba(122,184,255,0.35);}
   h1{font-size:30px;margin:0;padding:8px 0;color:var(--amber-bright);border-bottom:2px solid var(--amber-dim);}
   h2{font-size:24px;margin:24px 0 8px 0;color:var(--amber-bright);border-bottom:1px solid var(--amber-faint);padding-bottom:4px;}
   h3{font-size:20px;margin:16px 0 4px 0;color:var(--amber-bright);}
@@ -19,370 +23,375 @@
   strong{color:var(--amber-bright);} em{color:var(--amber);font-style:italic;}
   code{font-family:inherit;font-size:15px;background:var(--bg-cell);color:var(--amber-bright);padding:1px 5px;border-radius:3px;border:1px solid var(--amber-faint);}
   .legend{background:var(--bg-scaffold);border:1px solid var(--green-dim);padding:8px 14px;border-radius:6px;margin-bottom:18px;font-size:16px;color:var(--green);text-shadow:0 0 1px rgba(51,255,51,0.35);}
-  .ck{display:inline-block;width:22px;font-family:inherit;font-weight:bold;text-align:center;color:var(--amber-bright);}
-  .ck-todo{color:var(--amber-dim);}
-  .ck-pass{color:var(--green);}
-  .ck-fail{color:#FF4040;}
-  .ck-block{color:var(--amber-bright);}
+  .legend .swatch{display:inline-block;padding:1px 8px;border-radius:3px;margin:0 2px;font-weight:bold;}
+  .swatch-todo{color:var(--amber);}
+  .swatch-pass{color:var(--green);}
+  .swatch-fail{color:var(--fail);}
+  .swatch-block{color:var(--block);}
   ::selection{background:var(--amber);color:var(--bg);}
 </style>
 </head>
 <body>
 <div class="filename-header">ChatGPT/OPerationsHOS/SHAKEDOWN.html</div>
-<div class="legend"><strong>Legend:</strong> <code class="ck ck-todo">[ ]</code> = todo &middot; <code class="ck ck-pass">[x]</code> = verified working &middot; <code class="ck ck-fail">[!]</code> = broken &middot; <code class="ck ck-block">[~]</code> = blocked / needs Apple Developer / Michael action. Green = scaffolding (line numbers, header/footer). Amber = content.</div>
+<div class="legend"><strong>Legend (line color):</strong>
+  <span class="swatch swatch-todo">amber = todo</span> &middot;
+  <span class="swatch swatch-pass">green = verified</span> &middot;
+  <span class="swatch swatch-fail">red = broken</span> &middot;
+  <span class="swatch swatch-block">blue = blocked / needs Apple Developer / Michael action</span>.
+  Green numbers = line scaffolding.
+</div>
 
 <ol class="lines">
 <li><h1>OPerationsHOS &mdash; App Store Shakedown Checklist</h1></li>
 <li><em>Verify every feature works to App Store Connect quality before submission.</em></li>
-<li><strong>Build:</strong> <code>af4af3e</code> &middot; <strong>Updated:</strong> 2026-05-05</li>
+<li><strong>Build:</strong> <code>d45c0ef</code> &middot; <strong>Updated:</strong> 2026-05-05</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>1. Foundation (Phases 0-5)</h2></li>
 <li></li>
 <li><h3>1.1 Project &amp; build</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.1 App launches on iPhone 17 simulator without crash</li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.2 App launches on iPad Pro simulator without crash</li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.3 App launches on Mac (Designed for iPad) without crash</li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.4 App launches on real iPhone without crash</li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.5 App launches on real iPad without crash</li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.6 App icon shows correctly (light + dark + tinted)</li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.7 Bundle ID is <code>com.ChatGPT.OPerationsHOS</code></li>
-<li><span class="ck ck-todo">[ ]</span> 1.1.8 No console warnings during launch</li>
+<li>1.1.1 App launches on iPhone 17 simulator without crash</li>
+<li>1.1.2 App launches on iPad Pro simulator without crash</li>
+<li>1.1.3 App launches on Mac (Designed for iPad) without crash</li>
+<li>1.1.4 App launches on real iPhone without crash</li>
+<li>1.1.5 App launches on real iPad without crash</li>
+<li>1.1.6 App icon shows correctly (light + dark + tinted)</li>
+<li>1.1.7 Bundle ID is <code>com.ChatGPT.OPerationsHOS</code></li>
+<li>1.1.8 No console warnings during launch</li>
 <li></li>
 
 <li><h3>1.2 Universal record model</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.1 New Record sheet supports all 12 types: Note, Task, Document, Warranty, Appliance, Home System, Maintenance, Project, Timer, Media, Property, Person</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.2 New Record supports all 6 statuses: Open, Active, Waiting, Scheduled, Complete, Archived</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.3 New Record supports all 3 priorities: Low, Normal, High</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.4 Title required to save (Save button disabled when empty)</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.5 Tags input accepts comma-separated values</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.6 Due date toggle and picker work</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.7 Pinned toggle in edit sheet</li>
-<li><span class="ck ck-todo">[ ]</span> 1.2.8 Notes field expands as you type</li>
+<li>1.2.1 New Record sheet supports all 12 types: Note, Task, Document, Warranty, Appliance, Home System, Maintenance, Project, Timer, Media, Property, Person</li>
+<li>1.2.2 New Record supports all 6 statuses: Open, Active, Waiting, Scheduled, Complete, Archived</li>
+<li>1.2.3 New Record supports all 3 priorities: Low, Normal, High</li>
+<li>1.2.4 Title required to save (Save button disabled when empty)</li>
+<li>1.2.5 Tags input accepts comma-separated values</li>
+<li>1.2.6 Due date toggle and picker work</li>
+<li>1.2.7 Pinned toggle in edit sheet</li>
+<li>1.2.8 Notes field expands as you type</li>
 <li></li>
 
 <li><h3>1.3 Dashboard sections</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.1 First launch shows empty state with prominent + button</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.2 Today section appears for due-today / overdue records</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.3 Pinned section appears for pinned non-typed records</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.4 Home Systems section appears for appliance + homeSystem types</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.5 People section appears for person type</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.6 Projects section appears for project type</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.7 Upcoming section sorts future-dated records ascending</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.8 Recently Updated section shows top 5 by update time</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.9 Inbox section catches orphans (unpinned, undated, non-typed)</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.10 Sparse rule: typed sections show unpinned when fewer than 2 pinned</li>
-<li><span class="ck ck-todo">[ ]</span> 1.3.11 Empty sections silently hide (no headers visible)</li>
+<li>1.3.1 First launch shows empty state with prominent + button</li>
+<li>1.3.2 Today section appears for due-today / overdue records</li>
+<li>1.3.3 Pinned section appears for pinned non-typed records</li>
+<li>1.3.4 Home Systems section appears for appliance + homeSystem types</li>
+<li>1.3.5 People section appears for person type</li>
+<li>1.3.6 Projects section appears for project type</li>
+<li>1.3.7 Upcoming section sorts future-dated records ascending</li>
+<li>1.3.8 Recently Updated section shows top 5 by update time</li>
+<li>1.3.9 Inbox section catches orphans (unpinned, undated, non-typed)</li>
+<li>1.3.10 Sparse rule: typed sections show unpinned when fewer than 2 pinned</li>
+<li>1.3.11 Empty sections silently hide (no headers visible)</li>
 <li></li>
 
 <li><h3>1.4 Detail view</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.4.1 Tapping a card opens RecordDetailView</li>
-<li><span class="ck ck-todo">[ ]</span> 1.4.2 Header shows type symbol, label chip, pinned/archived flags, title, subtitle</li>
-<li><span class="ck ck-todo">[ ]</span> 1.4.3 Metadata card shows status, priority, due, related system, created, updated</li>
-<li><span class="ck ck-todo">[ ]</span> 1.4.4 Notes section shows when body is non-empty</li>
-<li><span class="ck ck-todo">[ ]</span> 1.4.5 Tags section shows tag chips</li>
-<li><span class="ck ck-todo">[ ]</span> 1.4.6 "Record Removed" appears if the record was deleted while open</li>
+<li>1.4.1 Tapping a card opens RecordDetailView</li>
+<li>1.4.2 Header shows type symbol, label chip, pinned/archived flags, title, subtitle</li>
+<li>1.4.3 Metadata card shows status, priority, due, related system, created, updated</li>
+<li>1.4.4 Notes section shows when body is non-empty</li>
+<li>1.4.5 Tags section shows tag chips</li>
+<li>1.4.6 "Record Removed" appears if the record was deleted while open</li>
 <li></li>
 
 <li><h3>1.5 Editing</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.5.1 + button opens New Record sheet</li>
-<li><span class="ck ck-todo">[ ]</span> 1.5.2 Pencil button opens Edit sheet pre-populated with current values</li>
-<li><span class="ck ck-todo">[ ]</span> 1.5.3 More menu: Pin/Unpin updates immediately</li>
-<li><span class="ck ck-todo">[ ]</span> 1.5.4 More menu: Archive/Unarchive updates immediately</li>
-<li><span class="ck ck-todo">[ ]</span> 1.5.5 More menu: Delete dismisses detail and removes record</li>
-<li><span class="ck ck-todo">[ ]</span> 1.5.6 Context menu on cards (long press): Pin / Archive / Delete all work</li>
+<li>1.5.1 + button opens New Record sheet</li>
+<li>1.5.2 Pencil button opens Edit sheet pre-populated with current values</li>
+<li>1.5.3 More menu: Pin/Unpin updates immediately</li>
+<li>1.5.4 More menu: Archive/Unarchive updates immediately</li>
+<li>1.5.5 More menu: Delete dismisses detail and removes record</li>
+<li>1.5.6 Context menu on cards (long press): Pin / Archive / Delete all work</li>
 <li></li>
 
 <li><h3>1.6 Contacts picker (Person type)</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.6.1 Picker only appears when Type is set to Person</li>
-<li><span class="ck ck-todo">[ ]</span> 1.6.2 First tap requests contacts permission</li>
-<li><span class="ck ck-todo">[ ]</span> 1.6.3 Granted permission opens system contact picker</li>
-<li><span class="ck ck-todo">[ ]</span> 1.6.4 Picked contact populates Title with full name</li>
-<li><span class="ck ck-todo">[ ]</span> 1.6.5 Picker doesn't black-screen (PickerPresenter UIKit-direct)</li>
-<li><span class="ck ck-todo">[ ]</span> 1.6.6 iOS 18 .limited authorization is honored as authorized</li>
+<li>1.6.1 Picker only appears when Type is set to Person</li>
+<li>1.6.2 First tap requests contacts permission</li>
+<li>1.6.3 Granted permission opens system contact picker</li>
+<li>1.6.4 Picked contact populates Title with full name</li>
+<li>1.6.5 Picker doesn't black-screen (PickerPresenter UIKit-direct)</li>
+<li>1.6.6 iOS 18 .limited authorization is honored as authorized</li>
 <li></li>
 
 <li><h3>1.7 Person detail enrichment</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.1 Contact photo renders when contact has one</li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.2 Generic person symbol shows when no photo</li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.3 Call button opens dialer with first phone number</li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.4 Message button opens Messages with first phone number</li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.5 Email button opens Mail with first email</li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.6 Quick action buttons disable when contact lacks that field</li>
-<li><span class="ck ck-todo">[ ]</span> 1.7.7 Contact Info card lists all phones, emails, birthday</li>
+<li>1.7.1 Contact photo renders when contact has one</li>
+<li>1.7.2 Generic person symbol shows when no photo</li>
+<li>1.7.3 Call button opens dialer with first phone number</li>
+<li>1.7.4 Message button opens Messages with first phone number</li>
+<li>1.7.5 Email button opens Mail with first email</li>
+<li>1.7.6 Quick action buttons disable when contact lacks that field</li>
+<li>1.7.7 Contact Info card lists all phones, emails, birthday</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>2. Phase 6 &mdash; SwiftData persistence</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 2.1 Records created in one session survive force-quit + relaunch</li>
-<li><span class="ck ck-todo">[ ]</span> 2.2 Edits persist across launches</li>
-<li><span class="ck ck-todo">[ ]</span> 2.3 Pin / Archive / Delete persist across launches</li>
-<li><span class="ck ck-todo">[ ]</span> 2.4 First-launch empty state appears (no PreviewData seeded in production)</li>
-<li><span class="ck ck-todo">[ ]</span> 2.5 PreviewData wrapped in <code>#if DEBUG</code> &mdash; release build has no sample data</li>
-<li><span class="ck ck-todo">[ ]</span> 2.6 No SwiftData migration warnings in console</li>
+<li>2.1 Records created in one session survive force-quit + relaunch</li>
+<li>2.2 Edits persist across launches</li>
+<li>2.3 Pin / Archive / Delete persist across launches</li>
+<li>2.4 First-launch empty state appears (no PreviewData seeded in production)</li>
+<li>2.5 PreviewData wrapped in <code>#if DEBUG</code> &mdash; release build has no sample data</li>
+<li>2.6 No SwiftData migration warnings in console</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>3. Phase 7 &mdash; Modules tab bar</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 3.1 Tab bar shows 11 tabs (Dashboard / Schedule / Vault / Systems / Maintenance / Projects / People / Timers / Media / Property / Settings)</li>
-<li><span class="ck ck-todo">[ ]</span> 3.2 iPhone shows overflow into More tab when tabs exceed visible width</li>
-<li><span class="ck ck-todo">[ ]</span> 3.3 Each tab maintains its own NavigationStack state</li>
-<li><span class="ck ck-todo">[ ]</span> 3.4 + button works on every tab</li>
-<li><span class="ck ck-todo">[ ]</span> 3.5 Vault shows all live records sorted newest-first</li>
-<li><span class="ck ck-todo">[ ]</span> 3.6 Systems tab shows only appliance + homeSystem records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.7 Maintenance tab shows only maintenance records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.8 Projects tab shows only project records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.9 People tab shows only person records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.10 Timers tab shows only timer records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.11 Media tab shows only media records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.12 Property tab shows only property records</li>
-<li><span class="ck ck-todo">[ ]</span> 3.13 Empty module shows empty state with prompt + button</li>
+<li>3.1 Tab bar shows 11 tabs (Dashboard / Schedule / Vault / Systems / Maintenance / Projects / People / Timers / Media / Property / Settings)</li>
+<li>3.2 iPhone shows overflow into More tab when tabs exceed visible width</li>
+<li>3.3 Each tab maintains its own NavigationStack state</li>
+<li>3.4 + button works on every tab</li>
+<li>3.5 Vault shows all live records sorted newest-first</li>
+<li>3.6 Systems tab shows only appliance + homeSystem records</li>
+<li>3.7 Maintenance tab shows only maintenance records</li>
+<li>3.8 Projects tab shows only project records</li>
+<li>3.9 People tab shows only person records</li>
+<li>3.10 Timers tab shows only timer records</li>
+<li>3.11 Media tab shows only media records</li>
+<li>3.12 Property tab shows only property records</li>
+<li>3.13 Empty module shows empty state with prompt + button</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>4. Phase 8 &mdash; Search</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 4.1 Search field appears at top of every module (pull down)</li>
-<li><span class="ck ck-todo">[ ]</span> 4.2 Search matches title (case-insensitive)</li>
-<li><span class="ck ck-todo">[ ]</span> 4.3 Search matches subtitle</li>
-<li><span class="ck ck-todo">[ ]</span> 4.4 Search matches body / notes</li>
-<li><span class="ck ck-todo">[ ]</span> 4.5 Search matches type label</li>
-<li><span class="ck ck-todo">[ ]</span> 4.6 Search matches status label</li>
-<li><span class="ck ck-todo">[ ]</span> 4.7 Search matches relatedSystem</li>
-<li><span class="ck ck-todo">[ ]</span> 4.8 Search matches any tag</li>
-<li><span class="ck ck-todo">[ ]</span> 4.9 No-result search shows ContentUnavailableView.search(text:)</li>
-<li><span class="ck ck-todo">[ ]</span> 4.10 Clearing search restores full module list</li>
+<li>4.1 Search field appears at top of every module (pull down)</li>
+<li>4.2 Search matches title (case-insensitive)</li>
+<li>4.3 Search matches subtitle</li>
+<li>4.4 Search matches body / notes</li>
+<li>4.5 Search matches type label</li>
+<li>4.6 Search matches status label</li>
+<li>4.7 Search matches relatedSystem</li>
+<li>4.8 Search matches any tag</li>
+<li>4.9 No-result search shows ContentUnavailableView.search(text:)</li>
+<li>4.10 Clearing search restores full module list</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>5. Phase 9 &mdash; Attachments</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 5.1 Attachments section appears in every record's detail view</li>
-<li><span class="ck ck-todo">[ ]</span> 5.2 Add menu offers Photo and File options</li>
-<li><span class="ck ck-todo">[ ]</span> 5.3 PhotosPicker opens without permission prompt (user-mediated)</li>
-<li><span class="ck ck-todo">[ ]</span> 5.4 Picked photo gets stored and listed</li>
-<li><span class="ck ck-todo">[ ]</span> 5.5 fileImporter opens system file picker</li>
-<li><span class="ck ck-todo">[ ]</span> 5.6 Picked file copies into app Documents/Attachments/</li>
-<li><span class="ck ck-todo">[ ]</span> 5.7 Each attachment row shows kind icon + original filename</li>
-<li><span class="ck ck-todo">[ ]</span> 5.8 Tapping a row opens QuickLook preview</li>
-<li><span class="ck ck-todo">[ ]</span> 5.9 QuickLook handles PDFs, images, and other file types</li>
-<li><span class="ck ck-todo">[ ]</span> 5.10 Long-press attachment row shows Delete option</li>
-<li><span class="ck ck-todo">[ ]</span> 5.11 Deleting attachment removes both the row and the file on disk</li>
-<li><span class="ck ck-todo">[ ]</span> 5.12 Deleting parent record cascade-deletes its attachments</li>
-<li><span class="ck ck-todo">[ ]</span> 5.13 Attachments persist across app launches</li>
+<li>5.1 Attachments section appears in every record's detail view</li>
+<li>5.2 Add menu offers Photo and File options</li>
+<li>5.3 PhotosPicker opens without permission prompt (user-mediated)</li>
+<li>5.4 Picked photo gets stored and listed</li>
+<li>5.5 fileImporter opens system file picker</li>
+<li>5.6 Picked file copies into app Documents/Attachments/</li>
+<li>5.7 Each attachment row shows kind icon + original filename</li>
+<li>5.8 Tapping a row opens QuickLook preview</li>
+<li>5.9 QuickLook handles PDFs, images, and other file types</li>
+<li>5.10 Long-press attachment row shows Delete option</li>
+<li>5.11 Deleting attachment removes both the row and the file on disk</li>
+<li>5.12 Deleting parent record cascade-deletes its attachments</li>
+<li>5.13 Attachments persist across app launches</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>6. Phase 10 &mdash; Activity Log</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 6.1 Activity section appears in every record's detail view</li>
-<li><span class="ck ck-todo">[ ]</span> 6.2 Empty state: "Edits, pins, and attachments are logged here."</li>
-<li><span class="ck ck-todo">[ ]</span> 6.3 Creating a record logs a "Created" event</li>
-<li><span class="ck ck-todo">[ ]</span> 6.4 Editing a record logs an "Edited" event</li>
-<li><span class="ck ck-todo">[ ]</span> 6.5 Pinning logs "Pinned"; unpinning logs "Unpinned"</li>
-<li><span class="ck ck-todo">[ ]</span> 6.6 Archiving logs "Archived"; unarchiving logs "Unarchived"</li>
-<li><span class="ck ck-todo">[ ]</span> 6.7 Adding an attachment logs "Attachment added" with filename</li>
-<li><span class="ck ck-todo">[ ]</span> 6.8 Removing an attachment logs "Attachment removed"</li>
-<li><span class="ck ck-todo">[ ]</span> 6.9 Events show relative timestamps ("2 minutes ago")</li>
-<li><span class="ck ck-todo">[ ]</span> 6.10 Events sorted newest first</li>
-<li><span class="ck ck-todo">[ ]</span> 6.11 Deleting parent record cascade-deletes its events</li>
+<li>6.1 Activity section appears in every record's detail view</li>
+<li>6.2 Empty state: "Edits, pins, and attachments are logged here."</li>
+<li>6.3 Creating a record logs a "Created" event</li>
+<li>6.4 Editing a record logs an "Edited" event</li>
+<li>6.5 Pinning logs "Pinned"; unpinning logs "Unpinned"</li>
+<li>6.6 Archiving logs "Archived"; unarchiving logs "Unarchived"</li>
+<li>6.7 Adding an attachment logs "Attachment added" with filename</li>
+<li>6.8 Removing an attachment logs "Attachment removed"</li>
+<li>6.9 Events show relative timestamps ("2 minutes ago")</li>
+<li>6.10 Events sorted newest first</li>
+<li>6.11 Deleting parent record cascade-deletes its events</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>7. Phase 11 &mdash; Schedule</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 7.1 Schedule tab between Dashboard and Vault</li>
-<li><span class="ck ck-todo">[ ]</span> 7.2 Empty schedule shows ContentUnavailableView</li>
-<li><span class="ck ck-todo">[ ]</span> 7.3 Expired section: records past due date AND not complete</li>
-<li><span class="ck ck-todo">[ ]</span> 7.4 Today section: records due strictly today (not overdue)</li>
-<li><span class="ck ck-todo">[ ]</span> 7.5 Upcoming section: records due in the future</li>
-<li><span class="ck ck-todo">[ ]</span> 7.6 Waiting section: records with status == Waiting</li>
-<li><span class="ck ck-todo">[ ]</span> 7.7 Each section header shows count badge</li>
-<li><span class="ck ck-todo">[ ]</span> 7.8 Empty sections hide silently</li>
-<li><span class="ck ck-todo">[ ]</span> 7.9 Context menu on cards still works (Pin/Archive/Delete)</li>
+<li>7.1 Schedule tab between Dashboard and Vault</li>
+<li>7.2 Empty schedule shows ContentUnavailableView</li>
+<li>7.3 Expired section: records past due date AND not complete</li>
+<li>7.4 Today section: records due strictly today (not overdue)</li>
+<li>7.5 Upcoming section: records due in the future</li>
+<li>7.6 Waiting section: records with status == Waiting</li>
+<li>7.7 Each section header shows count badge</li>
+<li>7.8 Empty sections hide silently</li>
+<li>7.9 Context menu on cards still works (Pin/Archive/Delete)</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>8. Phase 12 &mdash; Timers</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 8.1 Timer section appears only for records of type Timer</li>
-<li><span class="ck ck-todo">[ ]</span> 8.2 Start button begins counting from current accumulated time</li>
-<li><span class="ck ck-todo">[ ]</span> 8.3 Display ticks every second while running</li>
-<li><span class="ck ck-todo">[ ]</span> 8.4 Display turns accent-color while running</li>
-<li><span class="ck ck-todo">[ ]</span> 8.5 Stop button accumulates elapsed seconds and pauses</li>
-<li><span class="ck ck-todo">[ ]</span> 8.6 Reset button only appears when stopped + has accumulated time</li>
-<li><span class="ck ck-todo">[ ]</span> 8.7 Reset zeros the timer</li>
-<li><span class="ck ck-todo">[ ]</span> 8.8 Project link menu lists all live project records</li>
-<li><span class="ck ck-todo">[ ]</span> 8.9 Selecting a project links the timer</li>
-<li><span class="ck ck-todo">[ ]</span> 8.10 "None" option clears the link</li>
-<li><span class="ck ck-todo">[ ]</span> 8.11 Linked project name displays after selection</li>
-<li><span class="ck ck-todo">[ ]</span> 8.12 Timer state persists across app close</li>
-<li><span class="ck ck-todo">[ ]</span> 8.13 Format switches between MM:SS and H:MM:SS at 1 hour</li>
+<li>8.1 Timer section appears only for records of type Timer</li>
+<li>8.2 Start button begins counting from current accumulated time</li>
+<li>8.3 Display ticks every second while running</li>
+<li>8.4 Display turns accent-color while running</li>
+<li>8.5 Stop button accumulates elapsed seconds and pauses</li>
+<li>8.6 Reset button only appears when stopped + has accumulated time</li>
+<li>8.7 Reset zeros the timer</li>
+<li>8.8 Project link menu lists all live project records</li>
+<li>8.9 Selecting a project links the timer</li>
+<li>8.10 "None" option clears the link</li>
+<li>8.11 Linked project name displays after selection</li>
+<li>8.12 Timer state persists across app close</li>
+<li>8.13 Format switches between MM:SS and H:MM:SS at 1 hour</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>9. Phase 13 &mdash; AI Layer</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 9.1 AI Actions section appears in every record's detail view</li>
-<li><span class="ck ck-todo">[ ]</span> 9.2 Without API key, section shows "Add an Anthropic API key in Settings"</li>
-<li><span class="ck ck-todo">[ ]</span> 9.3 Settings tab → Anthropic API → SecureField accepts API key</li>
-<li><span class="ck ck-todo">[ ]</span> 9.4 Save button writes key to Keychain</li>
-<li><span class="ck ck-todo">[ ]</span> 9.5 Saved confirmation appears for 2 seconds</li>
-<li><span class="ck ck-todo">[ ]</span> 9.6 Remove button clears Keychain</li>
-<li><span class="ck ck-todo">[ ]</span> 9.7 Key persists across app launches</li>
-<li><span class="ck ck-todo">[ ]</span> 9.8 With key, three buttons enable: Summarize / Extract Dates / Suggest Category</li>
-<li><span class="ck ck-todo">[ ]</span> 9.9 Tapping any button shows ProgressView while processing</li>
-<li><span class="ck ck-todo">[ ]</span> 9.10 Summarize returns 2-sentence summary in result area</li>
-<li><span class="ck ck-todo">[ ]</span> 9.11 Extract Dates returns date list in result area</li>
-<li><span class="ck ck-todo">[ ]</span> 9.12 Suggest Category returns one type label</li>
-<li><span class="ck ck-todo">[ ]</span> 9.13 If suggested category matches an ItemType, "Apply category" button appears</li>
-<li><span class="ck ck-todo">[ ]</span> 9.14 Apply category writes new type to the record</li>
-<li><span class="ck ck-todo">[ ]</span> 9.15 Network failure shows red error text</li>
-<li><span class="ck ck-todo">[ ]</span> 9.16 Invalid API key shows status code error</li>
-<li><span class="ck ck-todo">[ ]</span> 9.17 Privacy footer in Settings explains key handling</li>
+<li>9.1 AI Actions section appears in every record's detail view</li>
+<li>9.2 Without API key, section shows "Add an Anthropic API key in Settings"</li>
+<li>9.3 Settings tab → Anthropic API → SecureField accepts API key</li>
+<li>9.4 Save button writes key to Keychain</li>
+<li>9.5 Saved confirmation appears for 2 seconds</li>
+<li>9.6 Remove button clears Keychain</li>
+<li>9.7 Key persists across app launches</li>
+<li>9.8 With key, three buttons enable: Summarize / Extract Dates / Suggest Category</li>
+<li>9.9 Tapping any button shows ProgressView while processing</li>
+<li>9.10 Summarize returns 2-sentence summary in result area</li>
+<li>9.11 Extract Dates returns date list in result area</li>
+<li>9.12 Suggest Category returns one type label</li>
+<li>9.13 If suggested category matches an ItemType, "Apply category" button appears</li>
+<li>9.14 Apply category writes new type to the record</li>
+<li>9.15 Network failure shows red error text</li>
+<li>9.16 Invalid API key shows status code error</li>
+<li>9.17 Privacy footer in Settings explains key handling</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>10. Phase 14 &mdash; iCloud Sync</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 10.1 Entitlements include <code>iCloud.com.ChatGPT.OPerationsHOS</code></li>
-<li><span class="ck ck-todo">[ ]</span> 10.2 ModelConfiguration uses <code>cloudKitDatabase: .automatic</code></li>
-<li><span class="ck ck-todo">[~]</span> 10.3 CloudKit container created in Apple Developer Portal (Michael action)</li>
-<li><span class="ck ck-todo">[~]</span> 10.4 Schema deploys to CloudKit production environment (Michael action via Xcode)</li>
-<li><span class="ck ck-todo">[ ]</span> 10.5 Record created on iPhone appears on iPad after sync</li>
-<li><span class="ck ck-todo">[ ]</span> 10.6 Record edited on iPad updates on iPhone</li>
-<li><span class="ck ck-todo">[ ]</span> 10.7 Attachment added on iPhone syncs to iPad</li>
-<li><span class="ck ck-todo">[ ]</span> 10.8 Activity log syncs across devices</li>
-<li><span class="ck ck-todo">[ ]</span> 10.9 Offline edits sync when device reconnects</li>
-<li><span class="ck ck-todo">[ ]</span> 10.10 Sign-out of iCloud handled gracefully (no crash)</li>
+<li>10.1 Entitlements include <code>iCloud.com.ChatGPT.OPerationsHOS</code></li>
+<li>10.2 ModelConfiguration uses <code>cloudKitDatabase: .automatic</code></li>
+<li class="block">10.3 CloudKit container created in Apple Developer Portal (Michael action)</li>
+<li class="block">10.4 Schema deploys to CloudKit production environment (Michael action via Xcode)</li>
+<li>10.5 Record created on iPhone appears on iPad after sync</li>
+<li>10.6 Record edited on iPad updates on iPhone</li>
+<li>10.7 Attachment added on iPhone syncs to iPad</li>
+<li>10.8 Activity log syncs across devices</li>
+<li>10.9 Offline edits sync when device reconnects</li>
+<li>10.10 Sign-out of iCloud handled gracefully (no crash)</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>11. Phase 15 &mdash; iPad layout</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 11.1 iPad presents tabs as a sidebar (sidebarAdaptable)</li>
-<li><span class="ck ck-todo">[ ]</span> 11.2 Sidebar collapses on narrow widths back to tab bar</li>
-<li><span class="ck ck-todo">[ ]</span> 11.3 Selected sidebar item highlights</li>
-<li><span class="ck ck-todo">[ ]</span> 11.4 Detail content fills the right pane</li>
-<li><span class="ck ck-todo">[ ]</span> 11.5 Split-screen multitasking: app reflows correctly</li>
-<li><span class="ck ck-todo">[ ]</span> 11.6 Stage Manager: app behaves correctly when resized</li>
-<li><span class="ck ck-todo">[ ]</span> 11.7 Rotation iPhone-to-landscape and back: layout reflows</li>
+<li>11.1 iPad presents tabs as a sidebar (sidebarAdaptable)</li>
+<li>11.2 Sidebar collapses on narrow widths back to tab bar</li>
+<li>11.3 Selected sidebar item highlights</li>
+<li>11.4 Detail content fills the right pane</li>
+<li>11.5 Split-screen multitasking: app reflows correctly</li>
+<li>11.6 Stage Manager: app behaves correctly when resized</li>
+<li>11.7 Rotation iPhone-to-landscape and back: layout reflows</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>12. Phase 16 &mdash; Mac layout &amp; bulk edit</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 12.1 Mac build runs (Designed for iPad on Apple Silicon)</li>
-<li><span class="ck ck-todo">[ ]</span> 12.2 Window resizes correctly</li>
-<li><span class="ck ck-todo">[ ]</span> 12.3 Sidebar shows on Mac</li>
-<li><span class="ck ck-todo">[ ]</span> 12.4 Select toolbar button enters multi-select mode</li>
-<li><span class="ck ck-todo">[ ]</span> 12.5 Tapping rows in select mode toggles selection (checkmark)</li>
-<li><span class="ck ck-todo">[ ]</span> 12.6 Bulk Pin / Unpin works on selected records</li>
-<li><span class="ck ck-todo">[ ]</span> 12.7 Bulk Archive / Unarchive works on selected records</li>
-<li><span class="ck ck-todo">[ ]</span> 12.8 Bulk Delete removes all selected records</li>
-<li><span class="ck ck-todo">[ ]</span> 12.9 Done button exits select mode and clears selection</li>
-<li><span class="ck ck-todo">[ ]</span> 12.10 Selection state doesn't persist across mode toggle</li>
+<li>12.1 Mac build runs (Designed for iPad on Apple Silicon)</li>
+<li>12.2 Window resizes correctly</li>
+<li>12.3 Sidebar shows on Mac</li>
+<li>12.4 Select toolbar button enters multi-select mode</li>
+<li>12.5 Tapping rows in select mode toggles selection (checkmark)</li>
+<li>12.6 Bulk Pin / Unpin works on selected records</li>
+<li>12.7 Bulk Archive / Unarchive works on selected records</li>
+<li>12.8 Bulk Delete removes all selected records</li>
+<li>12.9 Done button exits select mode and clears selection</li>
+<li>12.10 Selection state doesn't persist across mode toggle</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>13. Phase 17 &mdash; Export</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[ ]</span> 13.1 Settings → Export records button opens ExportSheet</li>
-<li><span class="ck ck-todo">[ ]</span> 13.2 Format picker offers all 5 options</li>
-<li><span class="ck ck-todo">[ ]</span> 13.3 Markdown export produces readable .md with all records</li>
-<li><span class="ck ck-todo">[ ]</span> 13.4 CSV export opens cleanly in Numbers / Excel</li>
-<li><span class="ck ck-todo">[ ]</span> 13.5 CSV escapes commas, quotes, and newlines correctly</li>
-<li><span class="ck ck-todo">[ ]</span> 13.6 JSON export is valid (parses with <code>JSON.parse</code>)</li>
-<li><span class="ck ck-todo">[ ]</span> 13.7 PDF export renders multi-page output</li>
-<li><span class="ck ck-todo">[ ]</span> 13.8 ZIP export bundles all 4 formats + attachments folder</li>
-<li><span class="ck ck-todo">[ ]</span> 13.9 ZIP attachments folder structured by record UUID</li>
-<li><span class="ck ck-todo">[ ]</span> 13.10 Share sheet appears after export completes</li>
-<li><span class="ck ck-todo">[ ]</span> 13.11 Export only includes live (non-archived) records</li>
-<li><span class="ck ck-todo">[ ]</span> 13.12 Error message shows on export failure</li>
+<li>13.1 Settings → Export records button opens ExportSheet</li>
+<li>13.2 Format picker offers all 5 options</li>
+<li>13.3 Markdown export produces readable .md with all records</li>
+<li>13.4 CSV export opens cleanly in Numbers / Excel</li>
+<li>13.5 CSV escapes commas, quotes, and newlines correctly</li>
+<li>13.6 JSON export is valid (parses with <code>JSON.parse</code>)</li>
+<li>13.7 PDF export renders multi-page output</li>
+<li>13.8 ZIP export bundles all 4 formats + attachments folder</li>
+<li>13.9 ZIP attachments folder structured by record UUID</li>
+<li>13.10 Share sheet appears after export completes</li>
+<li>13.11 Export only includes live (non-archived) records</li>
+<li>13.12 Error message shows on export failure</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>14. App Store Connect requirements</h2></li>
 <li></li>
 <li><h3>14.1 Privacy &amp; permissions</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.1 PrivacyInfo.xcprivacy declares NSPrivacyTracking false</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.2 PrivacyInfo.xcprivacy declares no data collected</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.3 PrivacyInfo.xcprivacy declares FileTimestamp + UserDefaults reasons</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.4 NSContactsUsageDescription string is user-clear</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.5 No PhotoLibrary permission key (PhotosPicker is user-mediated)</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.6 Privacy URL <code>fluharty.me/privacy</code> resolves to a real page</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.7 Support URL <code>github.com/fluhartyml/OPerationsHOS</code> works</li>
-<li><span class="ck ck-todo">[ ]</span> 14.1.8 No 3rd party SDKs / trackers (privacy nutrition label clean)</li>
+<li>14.1.1 PrivacyInfo.xcprivacy declares NSPrivacyTracking false</li>
+<li>14.1.2 PrivacyInfo.xcprivacy declares no data collected</li>
+<li>14.1.3 PrivacyInfo.xcprivacy declares FileTimestamp + UserDefaults reasons</li>
+<li>14.1.4 NSContactsUsageDescription string is user-clear</li>
+<li>14.1.5 No PhotoLibrary permission key (PhotosPicker is user-mediated)</li>
+<li>14.1.6 Privacy URL <code>fluharty.me/privacy</code> resolves to a real page</li>
+<li>14.1.7 Support URL <code>github.com/fluhartyml/OPerationsHOS</code> works</li>
+<li>14.1.8 No 3rd party SDKs / trackers (privacy nutrition label clean)</li>
 <li></li>
 
 <li><h3>14.2 Accessibility &amp; Dynamic Type</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.1 All text uses semantic SwiftUI fonts (.body / .caption / .headline)</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.2 Dynamic Type largest size: layout doesn't break</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.3 Dynamic Type smallest size: layout doesn't break</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.4 VoiceOver: every button has a label</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.5 VoiceOver: every image has a label or is hidden</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.6 Tap targets &geq; 44pt</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.7 Color contrast passes WCAG AA in both light + dark mode</li>
-<li><span class="ck ck-todo">[ ]</span> 14.2.8 Reduce Motion respected (no fancy spring animations on entry)</li>
+<li>14.2.1 All text uses semantic SwiftUI fonts (.body / .caption / .headline)</li>
+<li>14.2.2 Dynamic Type largest size: layout doesn't break</li>
+<li>14.2.3 Dynamic Type smallest size: layout doesn't break</li>
+<li>14.2.4 VoiceOver: every button has a label</li>
+<li>14.2.5 VoiceOver: every image has a label or is hidden</li>
+<li>14.2.6 Tap targets &geq; 44pt</li>
+<li>14.2.7 Color contrast passes WCAG AA in both light + dark mode</li>
+<li>14.2.8 Reduce Motion respected (no fancy spring animations on entry)</li>
 <li></li>
 
 <li><h3>14.3 Branding &amp; copy</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 14.3.1 App display name is "OPerationsHOS" everywhere</li>
-<li><span class="ck ck-todo">[ ]</span> 14.3.2 No "Claude" / "ChatGPT" / "demo" in user-facing copy</li>
-<li><span class="ck ck-todo">[ ]</span> 14.3.3 Tagline "Organize. Track. Operate." appears on About</li>
-<li><span class="ck ck-todo">[ ]</span> 14.3.4 Subtitle "Human Operating System" appears on About</li>
-<li><span class="ck ck-todo">[ ]</span> 14.3.5 No internal jargon or developer-speak in user-facing copy</li>
-<li><span class="ck ck-todo">[ ]</span> 14.3.6 No "TODO", "FIXME", "Phase N" markers visible to user</li>
+<li>14.3.1 App display name is "OPerationsHOS" everywhere</li>
+<li>14.3.2 No "Claude" / "ChatGPT" / "demo" in user-facing copy</li>
+<li>14.3.3 Tagline "Organize. Track. Operate." appears on About</li>
+<li>14.3.4 Subtitle "Human Operating System" appears on About</li>
+<li>14.3.5 No internal jargon or developer-speak in user-facing copy</li>
+<li>14.3.6 No "TODO", "FIXME", "Phase N" markers visible to user</li>
 <li></li>
 
 <li><h3>14.4 Stability</h3></li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.1 Cold launch: no crash, no console error</li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.2 Background-then-resume: state intact</li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.3 Force-quit then relaunch: data intact</li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.4 Memory: scrolling Vault with 100+ records doesn't spike</li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.5 Network off: AI actions show clear error, app doesn't hang</li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.6 Spam-tap + button: no duplicate sheets</li>
-<li><span class="ck ck-todo">[ ]</span> 14.4.7 Rapid edit / save / dismiss: no race conditions</li>
+<li>14.4.1 Cold launch: no crash, no console error</li>
+<li>14.4.2 Background-then-resume: state intact</li>
+<li>14.4.3 Force-quit then relaunch: data intact</li>
+<li>14.4.4 Memory: scrolling Vault with 100+ records doesn't spike</li>
+<li>14.4.5 Network off: AI actions show clear error, app doesn't hang</li>
+<li>14.4.6 Spam-tap + button: no duplicate sheets</li>
+<li>14.4.7 Rapid edit / save / dismiss: no race conditions</li>
 <li></li>
 
 <li><h3>14.5 Submission artifacts (Michael in App Store Connect)</h3></li>
-<li><span class="ck ck-todo">[~]</span> 14.5.1 App Store Connect record created</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.2 Bundle ID <code>com.ChatGPT.OPerationsHOS</code> registered</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.3 App icon (1024&times;1024) uploaded</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.4 iPhone screenshots (1242&times;2688 or 1284&times;2778) uploaded</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.5 iPad screenshots uploaded</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.6 App description written</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.7 Subtitle (30 chars max)</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.8 Promotional text (170 chars max)</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.9 Keywords (100 chars total)</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.10 Primary category selected (Productivity?)</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.11 Age rating questionnaire completed</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.12 Privacy nutrition label filled out (no data collected)</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.13 What's New for v1.0</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.14 Build uploaded via Xcode → Archive → Distribute</li>
-<li><span class="ck ck-todo">[~]</span> 14.5.15 Submitted for review</li>
+<li class="block">14.5.1 App Store Connect record created</li>
+<li class="block">14.5.2 Bundle ID <code>com.ChatGPT.OPerationsHOS</code> registered</li>
+<li class="block">14.5.3 App icon (1024&times;1024) uploaded</li>
+<li class="block">14.5.4 iPhone screenshots (1242&times;2688 or 1284&times;2778) uploaded</li>
+<li class="block">14.5.5 iPad screenshots uploaded</li>
+<li class="block">14.5.6 App description written</li>
+<li class="block">14.5.7 Subtitle (30 chars max)</li>
+<li class="block">14.5.8 Promotional text (170 chars max)</li>
+<li class="block">14.5.9 Keywords (100 chars total)</li>
+<li class="block">14.5.10 Primary category selected (Productivity?)</li>
+<li class="block">14.5.11 Age rating questionnaire completed</li>
+<li class="block">14.5.12 Privacy nutrition label filled out (no data collected)</li>
+<li class="block">14.5.13 What's New for v1.0</li>
+<li class="block">14.5.14 Build uploaded via Xcode → Archive → Distribute</li>
+<li class="block">14.5.15 Submitted for review</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>15. CloudKit production deployment (Michael in Xcode + dev portal)</h2></li>
 <li></li>
-<li><span class="ck ck-todo">[~]</span> 15.1 Sign into Xcode with Apple Developer account</li>
-<li><span class="ck ck-todo">[~]</span> 15.2 Project &rarr; Signing &amp; Capabilities &rarr; iCloud capability enabled</li>
-<li><span class="ck ck-todo">[~]</span> 15.3 CloudKit container <code>iCloud.com.ChatGPT.OPerationsHOS</code> created</li>
-<li><span class="ck ck-todo">[~]</span> 15.4 First build to real device populates Development environment schema</li>
-<li><span class="ck ck-todo">[~]</span> 15.5 CloudKit Console &rarr; Schema &rarr; Deploy to Production</li>
+<li class="block">15.1 Sign into Xcode with Apple Developer account</li>
+<li class="block">15.2 Project &rarr; Signing &amp; Capabilities &rarr; iCloud capability enabled</li>
+<li class="block">15.3 CloudKit container <code>iCloud.com.ChatGPT.OPerationsHOS</code> created</li>
+<li class="block">15.4 First build to real device populates Development environment schema</li>
+<li class="block">15.5 CloudKit Console &rarr; Schema &rarr; Deploy to Production</li>
 <li></li>
 
 <li><hr></li>
 <li><h2>16. Notes</h2></li>
 <li></li>
 <li>This document lives in the OPerationsHOS repo so it's version-controlled alongside the app.</li>
-<li>Mark items as you verify by editing the <code>[ ]</code> markers to <code>[x]</code> (pass), <code>[!]</code> (broken), or <code>[~]</code> (blocked / external).</li>
-<li>Refresh in browser after edits to see the new state. No need to rebuild &mdash; this is a static HTML file.</li>
-<li>Sections 14.5 and 15 require Michael action in Apple Developer Portal / App Store Connect / Xcode &mdash; not buildable from terminal.</li>
+<li>Tell me a line number to mark; I'll add the class (pass / fail / block) and refresh.</li>
+<li>Default amber means "not yet checked." Sections 14.5 and 15 require Michael action in Apple Developer Portal / App Store Connect / Xcode &mdash; pre-marked blue.</li>
 <li></li>
 <li><em>&mdash; End of shakedown checklist &mdash;</em></li>
 </ol>
