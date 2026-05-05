@@ -69,6 +69,22 @@ final class ContactsAccess {
     }
 }
 
+func lookupContact(identifier: String) -> CNContact? {
+    guard !identifier.isEmpty else { return nil }
+    let store = CNContactStore()
+    let keys: [CNKeyDescriptor] = [
+        CNContactGivenNameKey as CNKeyDescriptor,
+        CNContactFamilyNameKey as CNKeyDescriptor,
+        CNContactPhoneNumbersKey as CNKeyDescriptor,
+        CNContactEmailAddressesKey as CNKeyDescriptor,
+        CNContactBirthdayKey as CNKeyDescriptor,
+        CNContactImageDataKey as CNKeyDescriptor,
+        CNContactImageDataAvailableKey as CNKeyDescriptor,
+        CNContactFormatter.descriptorForRequiredKeys(for: .fullName)
+    ]
+    return try? store.unifiedContact(withIdentifier: identifier, keysToFetch: keys)
+}
+
 func displayName(for contact: CNContact) -> String {
     let formatter = CNContactFormatter()
     formatter.style = .fullName
