@@ -106,7 +106,7 @@ struct RootTabView: View {
             }
 
             NavigationStack {
-                SettingsView()
+                SettingsView(store: store)
             }
             .tabItem {
                 Label("Settings", systemImage: "gearshape")

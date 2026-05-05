@@ -1,11 +1,34 @@
 import SwiftUI
 
 struct SettingsView: View {
+    let store: OperatorStore?
+
     @State private var apiKey: String = ""
     @State private var savedConfirmation: Bool = false
+    @State private var showingExport: Bool = false
+
+    init(store: OperatorStore? = nil) {
+        self.store = store
+    }
 
     var body: some View {
         Form {
+            if let store {
+                Section {
+                    Button {
+                        showingExport = true
+                    } label: {
+                        Label("Export records", systemImage: "square.and.arrow.up")
+                    }
+                } header: {
+                    Text("Export")
+                } footer: {
+                    Text("Save your records as Markdown, CSV, JSON, PDF, or a complete ZIP bundle.")
+                }
+                .sheet(isPresented: $showingExport) {
+                    ExportSheet(store: store)
+                }
+            }
             Section {
                 SecureField("Anthropic API Key", text: $apiKey)
                     .autocorrectionDisabled()
