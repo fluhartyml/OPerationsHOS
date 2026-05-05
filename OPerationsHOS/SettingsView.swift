@@ -58,10 +58,11 @@ struct SettingsView: View {
             }
 
             Section("About") {
-                LabeledContent("App", value: "OPerationsHOS")
-                LabeledContent("Tagline", value: "Organize. Track. Operate.")
-                LabeledContent("Privacy", value: "fluharty.me/privacy")
-                LabeledContent("Support", value: "github.com/fluhartyml/OPerationsHOS")
+                NavigationLink {
+                    AboutView()
+                } label: {
+                    Label("About OPerationsHOS", systemImage: "info.circle")
+                }
             }
         }
         .navigationTitle("Settings")
