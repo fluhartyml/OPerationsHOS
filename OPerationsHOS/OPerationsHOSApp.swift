@@ -7,6 +7,7 @@ struct OPerationsHOSApp: App {
         let schema = Schema([
             OperatorItem.self,
             Attachment.self,
+            ActivityEvent.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

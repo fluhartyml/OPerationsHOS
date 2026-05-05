@@ -35,12 +35,14 @@ final class OperatorStore {
 
     func add(_ item: OperatorItem) {
         modelContext.insert(item)
+        log(.created, on: item, details: item.title)
         try? modelContext.save()
         refresh()
     }
 
     func update(_ updated: OperatorItem) {
         updated.updatedDate = Date()
+        log(.edited, on: updated, details: updated.title)
         try? modelContext.save()
         refresh()
     }
@@ -56,6 +58,7 @@ final class OperatorStore {
         guard let target = items.first(where: { $0.id == id }) else { return }
         target.pinned.toggle()
         target.updatedDate = Date()
+        log(target.pinned ? .pinned : .unpinned, on: target)
         try? modelContext.save()
         refresh()
     }
@@ -64,8 +67,20 @@ final class OperatorStore {
         guard let target = items.first(where: { $0.id == id }) else { return }
         target.archived.toggle()
         target.updatedDate = Date()
+        log(target.archived ? .archived : .unarchived, on: target)
         try? modelContext.save()
         refresh()
+    }
+
+    private func log(_ kind: ActivityKind, on item: OperatorItem, details: String = "") {
+        let event = ActivityEvent(kind: kind, details: details)
+        modelContext.insert(event)
+        event.owner = item
+        if item.events == nil {
+            item.events = [event]
+        } else {
+            item.events?.append(event)
+        }
     }
 
     // MARK: - Attachments
@@ -79,6 +94,7 @@ final class OperatorStore {
             item.attachments?.append(attachment)
         }
         item.updatedDate = Date()
+        log(.attachmentAdded, on: item, details: attachment.originalName)
         try? modelContext.save()
         refresh()
     }
@@ -87,6 +103,7 @@ final class OperatorStore {
         if let owner = attachment.owner {
             owner.attachments?.removeAll { $0.id == attachment.id }
             owner.updatedDate = Date()
+            log(.attachmentRemoved, on: owner, details: attachment.originalName)
         }
         modelContext.delete(attachment)
         try? modelContext.save()

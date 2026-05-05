@@ -22,6 +22,9 @@ final class OperatorItem {
     @Relationship(deleteRule: .cascade, inverse: \Attachment.owner)
     var attachments: [Attachment]? = []
 
+    @Relationship(deleteRule: .cascade, inverse: \ActivityEvent.owner)
+    var events: [ActivityEvent]? = []
+
     init(
         id: UUID = UUID(),
         title: String,

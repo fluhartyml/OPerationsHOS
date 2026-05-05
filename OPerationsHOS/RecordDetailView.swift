@@ -98,7 +98,7 @@ struct RecordDetailView: View {
                     tagsSection(for: item)
                 }
                 attachmentsSection(for: item)
-                placeholders
+                activityLogSection(for: item)
             }
             .padding()
         }
@@ -418,21 +418,44 @@ struct RecordDetailView: View {
         }
     }
 
-    private var placeholders: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            placeholder("Activity Log", "Will arrive in Phase 10")
-        }
-    }
-
-    private func placeholder(_ title: String, _ note: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title).font(.headline)
-            Text(note).font(.caption).foregroundStyle(.secondary)
+    @ViewBuilder
+    private func activityLogSection(for item: OperatorItem) -> some View {
+        let events = (item.events ?? []).sorted { $0.timestamp > $1.timestamp }
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Activity").font(.headline)
+            if events.isEmpty {
+                Text("Edits, pins, and attachments are logged here.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(events) { event in
+                    HStack(alignment: .firstTextBaseline) {
+                        Image(systemName: event.kind.symbol)
+                            .foregroundStyle(.tint)
+                            .frame(width: 22)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(event.kind.label)
+                                .font(.subheadline)
+                            if !event.details.isEmpty {
+                                Text(event.details)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        Spacer()
+                        Text(event.timestamp, style: .relative)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
         }
         .padding(AppTheme.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
     }
+
 }
 
 #if canImport(UIKit)
