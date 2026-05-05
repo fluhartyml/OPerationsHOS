@@ -45,7 +45,7 @@ struct DashboardView: View {
         ContentUnavailableView {
             Label("No Records Yet", systemImage: "tray")
         } description: {
-            Text("Tap the plus button to create your first record. Track warranties, appliances, projects, people, and any other piece of operational reality.")
+            Text("Tap the plus button to create your first record. Track warranties, appliances, projects, people, vendors, and receipts.")
         } actions: {
             Button {
                 showingNewRecord = true
