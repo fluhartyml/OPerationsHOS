@@ -8,6 +8,8 @@ struct ModuleView: View {
     @Binding var showingNewRecord: Bool
 
     @State private var searchText: String = ""
+    @State private var selectionMode: Bool = false
+    @State private var selectedIDs: Set<UUID> = []
 
     private var scopedItems: [OperatorItem] {
         let live = store.items.filter { !$0.archived }
@@ -53,11 +55,47 @@ struct ModuleView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
         #endif
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search \(title)")
+        .searchable(text: $searchText, prompt: "Search \(title)")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { showingNewRecord = true } label: {
                     Label("New Record", systemImage: "plus")
+                }
+            }
+            ToolbarItem(placement: .secondaryAction) {
+                Button {
+                    selectionMode.toggle()
+                    if !selectionMode { selectedIDs.removeAll() }
+                } label: {
+                    Label(selectionMode ? "Done" : "Select",
+                          systemImage: selectionMode ? "xmark.circle" : "checklist")
+                }
+            }
+            if selectionMode && !selectedIDs.isEmpty {
+                ToolbarItem(placement: .secondaryAction) {
+                    Menu {
+                        Button {
+                            selectedIDs.forEach { store.togglePin(id: $0) }
+                            selectedIDs.removeAll()
+                        } label: {
+                            Label("Pin / Unpin", systemImage: "pin")
+                        }
+                        Button {
+                            selectedIDs.forEach { store.toggleArchive(id: $0) }
+                            selectedIDs.removeAll()
+                        } label: {
+                            Label("Archive / Unarchive", systemImage: "archivebox")
+                        }
+                        Button(role: .destructive) {
+                            selectedIDs.forEach { store.delete(id: $0) }
+                            selectedIDs.removeAll()
+                            selectionMode = false
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    } label: {
+                        Label("\(selectedIDs.count) Actions", systemImage: "ellipsis.circle")
+                    }
                 }
             }
         }
@@ -67,27 +105,44 @@ struct ModuleView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: AppTheme.cardSpacing) {
                 ForEach(items) { item in
-                    NavigationLink(value: item.id) {
-                        OperatorCard(item: item)
-                    }
-                    .buttonStyle(.plain)
-                    .contextMenu {
+                    if selectionMode {
                         Button {
-                            store.togglePin(id: item.id)
+                            if selectedIDs.contains(item.id) {
+                                selectedIDs.remove(item.id)
+                            } else {
+                                selectedIDs.insert(item.id)
+                            }
                         } label: {
-                            Label(item.pinned ? "Unpin" : "Pin",
-                                  systemImage: item.pinned ? "pin.slash" : "pin")
+                            HStack {
+                                Image(systemName: selectedIDs.contains(item.id) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(selectedIDs.contains(item.id) ? Color.accentColor : Color.secondary)
+                                OperatorCard(item: item)
+                            }
                         }
-                        Button {
-                            store.toggleArchive(id: item.id)
-                        } label: {
-                            Label(item.archived ? "Unarchive" : "Archive",
-                                  systemImage: "archivebox")
+                        .buttonStyle(.plain)
+                    } else {
+                        NavigationLink(value: item.id) {
+                            OperatorCard(item: item)
                         }
-                        Button(role: .destructive) {
-                            store.delete(id: item.id)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+                        .buttonStyle(.plain)
+                        .contextMenu {
+                            Button {
+                                store.togglePin(id: item.id)
+                            } label: {
+                                Label(item.pinned ? "Unpin" : "Pin",
+                                      systemImage: item.pinned ? "pin.slash" : "pin")
+                            }
+                            Button {
+                                store.toggleArchive(id: item.id)
+                            } label: {
+                                Label(item.archived ? "Unarchive" : "Archive",
+                                      systemImage: "archivebox")
+                            }
+                            Button(role: .destructive) {
+                                store.delete(id: item.id)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
                     }
                 }

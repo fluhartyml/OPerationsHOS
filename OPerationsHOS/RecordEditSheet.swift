@@ -73,7 +73,9 @@ struct RecordEditSheet: View {
 
                 Section("Tags") {
                     TextField("Comma-separated", text: $tagsText)
+                        #if os(iOS)
                         .textInputAutocapitalization(.never)
+                        #endif
                         .autocorrectionDisabled()
                 }
             }
