@@ -13,6 +13,7 @@ struct RootTabView: View {
     @State private var timersSheet = false
     @State private var mediaSheet = false
     @State private var propertySheet = false
+    @State private var settingsSheet = false
 
     var body: some View {
         TabView {
@@ -102,6 +103,13 @@ struct RootTabView: View {
                     store: store,
                     showingNewRecord: $propertySheet
                 )
+            }
+
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gearshape")
             }
         }
     }

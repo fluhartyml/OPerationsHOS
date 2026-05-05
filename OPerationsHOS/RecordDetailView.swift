@@ -18,7 +18,10 @@ struct RecordDetailView: View {
     @State private var showingDocumentPicker = false
     @State private var photoItem: PhotosPickerItem?
     @State private var quickLookURL: URL?
+    @State private var aiResult: AIResult?
     @Environment(\.dismiss) private var dismiss
+
+    @Bindable private var ai = AIService.shared
 
     private var item: OperatorItem? {
         store.item(id: id)
@@ -100,6 +103,7 @@ struct RecordDetailView: View {
                 if !item.tags.isEmpty {
                     tagsSection(for: item)
                 }
+                aiSection(for: item)
                 attachmentsSection(for: item)
                 activityLogSection(for: item)
             }
@@ -426,6 +430,101 @@ struct RecordDetailView: View {
     }
 
     @ViewBuilder
+    private func aiSection(for item: OperatorItem) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "sparkles").foregroundStyle(.tint)
+                Text("AI Actions").font(.headline)
+                Spacer()
+                if ai.isProcessing {
+                    ProgressView().controlSize(.small)
+                }
+            }
+
+            if !ai.hasAPIKey {
+                Text("Add an Anthropic API key in Settings to enable AI actions.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                HStack(spacing: 8) {
+                    Button {
+                        runAI(.summary, on: item)
+                    } label: {
+                        Label("Summarize", systemImage: "text.alignleft")
+                    }
+                    Button {
+                        runAI(.dates, on: item)
+                    } label: {
+                        Label("Extract Dates", systemImage: "calendar")
+                    }
+                    Button {
+                        runAI(.category, on: item)
+                    } label: {
+                        Label("Suggest Category", systemImage: "tag")
+                    }
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .disabled(ai.isProcessing)
+            }
+
+            if let result = aiResult {
+                Divider()
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(result.kind.label).font(.caption).foregroundStyle(.secondary)
+                    Text(result.text).font(.body)
+                    if result.kind == .category, let suggested = matchType(for: result.text) {
+                        Button {
+                            apply(suggestedType: suggested, to: item)
+                        } label: {
+                            Label("Apply category", systemImage: "checkmark")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.small)
+                    }
+                }
+            }
+
+            if let error = ai.lastError, aiResult == nil {
+                Text(error).font(.caption).foregroundStyle(.red)
+            }
+        }
+        .padding(AppTheme.cardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
+    }
+
+    private func runAI(_ kind: AIResult.Kind, on item: OperatorItem) {
+        aiResult = nil
+        Task {
+            let text: String?
+            switch kind {
+            case .summary:
+                text = await ai.summarize(item)
+            case .dates:
+                text = await ai.extractDates(from: item)
+            case .category:
+                text = await ai.suggestCategory(for: item)
+            }
+            if let text {
+                aiResult = AIResult(kind: kind, text: text)
+            }
+        }
+    }
+
+    private func matchType(for text: String) -> ItemType? {
+        let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        return ItemType.allCases.first { $0.label.lowercased() == cleaned }
+    }
+
+    private func apply(suggestedType: ItemType, to item: OperatorItem) {
+        item.type = suggestedType
+        store.update(item)
+        aiResult = nil
+    }
+
+    @ViewBuilder
     private func activityLogSection(for item: OperatorItem) -> some View {
         let events = (item.events ?? []).sorted { $0.timestamp > $1.timestamp }
         VStack(alignment: .leading, spacing: 8) {
@@ -463,6 +562,25 @@ struct RecordDetailView: View {
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
     }
 
+}
+
+struct AIResult: Equatable {
+    enum Kind: String, Equatable {
+        case summary
+        case dates
+        case category
+
+        var label: String {
+            switch self {
+            case .summary: return "Summary"
+            case .dates: return "Extracted dates"
+            case .category: return "Suggested category"
+            }
+        }
+    }
+
+    let kind: Kind
+    let text: String
 }
 
 #if canImport(UIKit)
