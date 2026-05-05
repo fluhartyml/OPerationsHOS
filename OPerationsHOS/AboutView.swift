@@ -52,7 +52,7 @@ struct AboutView: View {
             }
 
             Section("Credits") {
-                Text("Engineered by Claude, operated by Michael L. Fluharty")
+                Text("ChatGPT was the architect, engineered by Claude, operated by Michael L. Fluharty")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
