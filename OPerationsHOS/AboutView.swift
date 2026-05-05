@@ -28,7 +28,7 @@ struct AboutView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    Text("Where scattered reality becomes structured and retrievable. Track warranties, appliances, projects, people, and any other piece of operational reality with one universal record system.")
+                    Text("Where scattered reality becomes structured and retrievable. Track warranties, appliances, projects, people, vendors, and receipts with one Human OPerating System.")
                         .font(.body)
                         .foregroundStyle(.primary)
                 }
