@@ -1,19 +1,21 @@
 import Foundation
+import SwiftData
 
-struct OperatorItem: Identifiable, Hashable {
-    let id: UUID
-    var title: String
-    var subtitle: String
-    var body: String
-    var type: ItemType
-    var status: ItemStatus
-    var priority: ItemPriority
-    var createdDate: Date
-    var updatedDate: Date
+@Model
+final class OperatorItem {
+    var id: UUID = UUID()
+    var title: String = ""
+    var subtitle: String = ""
+    var body: String = ""
+    var type: ItemType = ItemType.note
+    var status: ItemStatus = ItemStatus.open
+    var priority: ItemPriority = ItemPriority.normal
+    var createdDate: Date = Date()
+    var updatedDate: Date = Date()
     var dueDate: Date?
-    var pinned: Bool
-    var archived: Bool
-    var tags: [String]
+    var pinned: Bool = false
+    var archived: Bool = false
+    var tags: [String] = []
     var relatedSystem: String?
     var source: String?
 
@@ -52,7 +54,7 @@ struct OperatorItem: Identifiable, Hashable {
     }
 }
 
-enum ItemType: String, CaseIterable, Identifiable {
+enum ItemType: String, Codable, CaseIterable, Identifiable {
     case note
     case task
     case document
@@ -103,7 +105,7 @@ enum ItemType: String, CaseIterable, Identifiable {
     }
 }
 
-enum ItemStatus: String, CaseIterable, Identifiable {
+enum ItemStatus: String, Codable, CaseIterable, Identifiable {
     case open
     case active
     case waiting
@@ -125,7 +127,7 @@ enum ItemStatus: String, CaseIterable, Identifiable {
     }
 }
 
-enum ItemPriority: String, CaseIterable, Identifiable {
+enum ItemPriority: String, Codable, CaseIterable, Identifiable {
     case low
     case normal
     case high

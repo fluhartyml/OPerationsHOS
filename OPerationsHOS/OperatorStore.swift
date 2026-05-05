@@ -1,13 +1,28 @@
 import Foundation
 import Observation
+import SwiftData
 
 @MainActor
 @Observable
 final class OperatorStore {
+    @ObservationIgnored private let modelContext: ModelContext
     var items: [OperatorItem]
 
-    init(items: [OperatorItem] = PreviewData.sampleItems) {
-        self.items = items
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+        self.items = []
+        refresh()
+    }
+
+    func refresh() {
+        let descriptor = FetchDescriptor<OperatorItem>(
+            sortBy: [SortDescriptor(\.updatedDate, order: .reverse)]
+        )
+        do {
+            self.items = try modelContext.fetch(descriptor)
+        } catch {
+            self.items = []
+        }
     }
 
     // MARK: - Lookup
@@ -19,30 +34,38 @@ final class OperatorStore {
     // MARK: - CRUD
 
     func add(_ item: OperatorItem) {
-        items.append(item)
+        modelContext.insert(item)
+        try? modelContext.save()
+        refresh()
     }
 
     func update(_ updated: OperatorItem) {
-        guard let index = items.firstIndex(where: { $0.id == updated.id }) else { return }
-        var refreshed = updated
-        refreshed.updatedDate = Date()
-        items[index] = refreshed
+        updated.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
     }
 
     func delete(id: UUID) {
-        items.removeAll { $0.id == id }
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        modelContext.delete(target)
+        try? modelContext.save()
+        refresh()
     }
 
     func togglePin(id: UUID) {
-        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-        items[index].pinned.toggle()
-        items[index].updatedDate = Date()
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        target.pinned.toggle()
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
     }
 
     func toggleArchive(id: UUID) {
-        guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-        items[index].archived.toggle()
-        items[index].updatedDate = Date()
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        target.archived.toggle()
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
     }
 
     // MARK: - Section semantics

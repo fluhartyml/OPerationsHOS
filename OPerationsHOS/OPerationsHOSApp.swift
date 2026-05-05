@@ -1,10 +1,3 @@
-//
-//  OPerationsHOSApp.swift
-//  OPerationsHOS
-//
-//  Created by Michael Fluharty on 5/4/26.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -12,7 +5,7 @@ import SwiftData
 struct OPerationsHOSApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            OperatorItem.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

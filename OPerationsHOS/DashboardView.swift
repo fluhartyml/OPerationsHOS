@@ -5,6 +5,27 @@ struct DashboardView: View {
     @Binding var showingNewRecord: Bool
 
     var body: some View {
+        Group {
+            if store.items.isEmpty {
+                emptyState
+            } else {
+                populatedDashboard
+            }
+        }
+        .navigationTitle("OPerationsHOS")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.large)
+        #endif
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button { showingNewRecord = true } label: {
+                    Label("New Record", systemImage: "plus")
+                }
+            }
+        }
+    }
+
+    private var populatedDashboard: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: AppTheme.sectionSpacing) {
                 section("Today", items: store.today)
@@ -18,16 +39,20 @@ struct DashboardView: View {
             }
             .padding()
         }
-        .navigationTitle("OPerationsHOS")
-        #if os(iOS)
-        .navigationBarTitleDisplayMode(.large)
-        #endif
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button { showingNewRecord = true } label: {
-                    Label("New Record", systemImage: "plus")
-                }
+    }
+
+    private var emptyState: some View {
+        ContentUnavailableView {
+            Label("No Records Yet", systemImage: "tray")
+        } description: {
+            Text("Tap the plus button to create your first record. Track warranties, appliances, projects, people, and any other piece of operational reality.")
+        } actions: {
+            Button {
+                showingNewRecord = true
+            } label: {
+                Label("New Record", systemImage: "plus")
             }
+            .buttonStyle(.borderedProminent)
         }
     }
 

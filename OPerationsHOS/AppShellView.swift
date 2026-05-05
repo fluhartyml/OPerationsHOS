@@ -1,8 +1,21 @@
 import SwiftUI
+import SwiftData
 
 struct AppShellView: View {
-    @State private var store = OperatorStore()
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        AppShellInner(modelContext: modelContext)
+    }
+}
+
+private struct AppShellInner: View {
+    @State private var store: OperatorStore
     @State private var showingNewRecord = false
+
+    init(modelContext: ModelContext) {
+        _store = State(initialValue: OperatorStore(modelContext: modelContext))
+    }
 
     var body: some View {
         NavigationStack {

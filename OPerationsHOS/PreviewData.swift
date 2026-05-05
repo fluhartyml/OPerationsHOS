@@ -1,12 +1,15 @@
+#if DEBUG
 import Foundation
+import SwiftData
 
 enum PreviewData {
-    static let sampleItems: [OperatorItem] = {
+    @MainActor
+    static func seed(_ context: ModelContext) {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
         let inDays: (Int) -> Date = { cal.date(byAdding: .day, value: $0, to: today)! }
 
-        return [
+        let items: [OperatorItem] = [
             OperatorItem(
                 title: "HVAC Coil Warranty",
                 subtitle: "Active until 03/31/2027",
@@ -110,5 +113,10 @@ enum PreviewData {
                 relatedSystem: "HVAC"
             )
         ]
-    }()
+
+        for item in items {
+            context.insert(item)
+        }
+    }
 }
+#endif
