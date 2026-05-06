@@ -153,6 +153,22 @@ final class OperatorStore {
         refresh()
     }
 
+    // MARK: - Sample data
+
+    /// Adds any missing sample records back into the store.
+    /// Re-running is safe — existing samples are skipped, deleted ones are restored.
+    func populateSampleRecords() {
+        let existingIDs = Set(items.map { $0.id })
+        for sample in SampleData.allSamples() {
+            if !existingIDs.contains(sample.id) {
+                modelContext.insert(sample)
+                log(.created, on: sample, details: sample.title)
+            }
+        }
+        try? modelContext.save()
+        refresh()
+    }
+
     func runningTimers() -> [OperatorItem] {
         items.filter { $0.type == .timer && $0.runningSince != nil && !$0.archived }
     }

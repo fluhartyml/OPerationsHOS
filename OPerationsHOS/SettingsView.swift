@@ -16,6 +16,18 @@ struct SettingsView: View {
             if let store {
                 Section {
                     Button {
+                        store.populateSampleRecords()
+                    } label: {
+                        Label("Populate sample records", systemImage: "tray.and.arrow.down")
+                    }
+                } header: {
+                    Text("Sample Records")
+                } footer: {
+                    Text("Adds twelve example records — one of each type — to give you a working tour of the app. Tapping again restores any you've deleted; existing ones stay put. To clear everything, delete and reinstall the app.")
+                }
+
+                Section {
+                    Button {
                         showingExport = true
                     } label: {
                         Label("Export records", systemImage: "square.and.arrow.up")
