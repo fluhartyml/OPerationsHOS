@@ -4,6 +4,14 @@
 <dict>
 	<key>NSContactsUsageDescription</key>
 	<string>OPerationsHOS uses Contacts to let you pick people you want to track as records — vendors, contractors, family, anyone whose context belongs in your operating system.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>OPerationsHOS keeps your scheduled records in sync with the system Calendar so they appear alongside your other appointments and reminders.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>OPerationsHOS keeps task records in sync with the system Reminders so checking one off in either place updates both.</string>
+	<key>NSAlarmKitUsageDescription</key>
+	<string>OPerationsHOS uses AlarmKit to schedule timer alerts that ring through Do Not Disturb so you don't miss the moment.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>OPerationsHOS uses Face ID to keep your Vault — private media and secure notes — accessible only to you.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -24,6 +24,10 @@ final class OperatorItem {
     var runningSince: Date?
     var linkedRecordID: UUID?
 
+    // Phase 20 / 21 — EventKit two-way sync identifiers
+    var eventIdentifier: String?
+    var reminderIdentifier: String?
+
     @Relationship(deleteRule: .cascade, inverse: \Attachment.owner)
     var attachments: [Attachment]? = []
 

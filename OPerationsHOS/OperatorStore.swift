@@ -37,6 +37,7 @@ final class OperatorStore {
         modelContext.insert(item)
         log(.created, on: item, details: item.title)
         try? modelContext.save()
+        syncToEventKit(item)
         refresh()
     }
 
@@ -44,14 +45,43 @@ final class OperatorStore {
         updated.updatedDate = Date()
         log(.edited, on: updated, details: updated.title)
         try? modelContext.save()
+        syncToEventKit(updated)
         refresh()
     }
 
     func delete(id: UUID) {
         guard let target = items.first(where: { $0.id == id }) else { return }
+        if let eventID = target.eventIdentifier {
+            EventKitStore.shared.deleteEvent(identifier: eventID)
+        }
+        if let reminderID = target.reminderIdentifier {
+            EventKitStore.shared.deleteReminder(identifier: reminderID)
+        }
         modelContext.delete(target)
         try? modelContext.save()
         refresh()
+    }
+
+    private func syncToEventKit(_ item: OperatorItem) {
+        // Calendar sync: any record with a dueDate
+        if item.dueDate != nil && EventKitStore.shared.calendarsAuthorized {
+            if let id = EventKitStore.shared.upsertEvent(for: item) {
+                item.eventIdentifier = id
+                try? modelContext.save()
+            }
+        } else if item.dueDate == nil, let oldID = item.eventIdentifier {
+            EventKitStore.shared.deleteEvent(identifier: oldID)
+            item.eventIdentifier = nil
+            try? modelContext.save()
+        }
+
+        // Reminders sync: task-type records
+        if item.type == .task && EventKitStore.shared.remindersAuthorized {
+            if let id = EventKitStore.shared.upsertReminder(for: item) {
+                item.reminderIdentifier = id
+                try? modelContext.save()
+            }
+        }
     }
 
     func togglePin(id: UUID) {
