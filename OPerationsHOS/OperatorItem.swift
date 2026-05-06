@@ -28,6 +28,10 @@ final class OperatorItem {
     var eventIdentifier: String?
     var reminderIdentifier: String?
 
+    // Phase 22 — AlarmKit countdown timer target
+    var alarmTargetSeconds: Double?
+    var alarmIdentifier: String?
+
     @Relationship(deleteRule: .cascade, inverse: \Attachment.owner)
     var attachments: [Attachment]? = []
 

@@ -149,6 +149,17 @@ final class OperatorStore {
             target.runningSince = Date()
             target.updatedDate = Date()
             try? modelContext.save()
+
+            // Schedule a system-level AlarmKit countdown if the timer has a target duration
+            if let duration = target.alarmTargetSeconds, duration > 0 {
+                Task { @MainActor in
+                    if let alarmID = await AlarmKitManager.shared.scheduleTimer(for: target, duration: duration) {
+                        target.alarmIdentifier = alarmID.uuidString
+                        try? self.modelContext.save()
+                        self.refresh()
+                    }
+                }
+            }
             refresh()
         }
     }
@@ -160,6 +171,14 @@ final class OperatorStore {
             target.accumulatedSeconds += Date().timeIntervalSince(started)
             target.runningSince = nil
             target.updatedDate = Date()
+
+            // Cancel any system-level AlarmKit countdown tied to this timer
+            if let alarmIDString = target.alarmIdentifier,
+               let alarmID = UUID(uuidString: alarmIDString) {
+                AlarmKitManager.shared.cancelTimer(id: alarmID)
+                target.alarmIdentifier = nil
+            }
+
             try? modelContext.save()
             refresh()
         }
