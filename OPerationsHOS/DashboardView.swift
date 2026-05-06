@@ -35,7 +35,6 @@ struct DashboardView: View {
                 section("Projects", items: store.projects)
                 section("Upcoming", items: store.upcoming)
                 section("Recently Updated", items: store.recentlyUpdated)
-                section("Inbox", items: store.inbox)
             }
             .padding()
         }
