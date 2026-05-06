@@ -6,6 +6,7 @@ struct RootTabView: View {
     @State private var dashboardSheet = false
     @State private var inboxSheet = false
     @State private var scheduleSheet = false
+    @State private var remindersSheet = false
     @State private var vaultSheet = false
     @State private var systemsSheet = false
     @State private var maintenanceSheet = false
@@ -28,6 +29,10 @@ struct RootTabView: View {
 
             tab("Schedule", "calendar", sheet: $scheduleSheet, defaultType: nil) {
                 ScheduleView(store: store, showingNewRecord: $scheduleSheet)
+            }
+
+            tab("Reminders", "checklist", sheet: $remindersSheet, defaultType: .task) {
+                RemindersView(store: store, showingNewRecord: $remindersSheet)
             }
 
             tab("Vault", "tray.full", sheet: $vaultSheet, defaultType: nil) {
