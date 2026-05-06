@@ -35,14 +35,8 @@ struct RootTabView: View {
                 RemindersView(store: store, showingNewRecord: $remindersSheet)
             }
 
-            tab("Vault", "tray.full", sheet: $vaultSheet, defaultType: nil) {
-                ModuleView(
-                    title: "Vault",
-                    symbol: "tray.full",
-                    scope: .all,
-                    store: store,
-                    showingNewRecord: $vaultSheet
-                )
+            tab("Vault", "lock.shield", sheet: $vaultSheet, defaultType: .secureNote) {
+                VaultView(store: store, showingNewRecord: $vaultSheet)
             }
 
             tab("Systems", "house", sheet: $systemsSheet, defaultType: .homeSystem) {
@@ -92,16 +86,6 @@ struct RootTabView: View {
                     scope: .types([.timer]),
                     store: store,
                     showingNewRecord: $timersSheet
-                )
-            }
-
-            tab("Media", "photo", sheet: $mediaSheet, defaultType: .media) {
-                ModuleView(
-                    title: "Media",
-                    symbol: "photo",
-                    scope: .types([.media]),
-                    store: store,
-                    showingNewRecord: $mediaSheet
                 )
             }
 
