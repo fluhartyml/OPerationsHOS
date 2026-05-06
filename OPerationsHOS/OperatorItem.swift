@@ -87,6 +87,7 @@ enum ItemType: String, Codable, CaseIterable, Identifiable {
     case property
     case person
     case secureNote
+    case transcription
 
     var id: String { rawValue }
 
@@ -105,6 +106,7 @@ enum ItemType: String, Codable, CaseIterable, Identifiable {
         case .property: return "Property"
         case .person: return "Person"
         case .secureNote: return "Secure Note"
+        case .transcription: return "Transcription"
         }
     }
 
@@ -123,13 +125,14 @@ enum ItemType: String, Codable, CaseIterable, Identifiable {
         case .property: return "building.2"
         case .person: return "person.crop.circle.fill"
         case .secureNote: return "lock.doc"
+        case .transcription: return "waveform"
         }
     }
 
     /// Types that live only inside the biometrically-gated Vault.
     var isVaultOnly: Bool {
         switch self {
-        case .media, .secureNote: return true
+        case .media, .secureNote, .transcription: return true
         default: return false
         }
     }

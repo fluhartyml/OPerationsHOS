@@ -9,20 +9,12 @@ struct VaultView: View {
     @State private var authError: String?
     @State private var authenticating: Bool = false
 
-    private var vaultItems: [OperatorItem] {
-        store.items
-            .filter { !$0.archived && $0.type.isVaultOnly }
-            .sorted { $0.updatedDate > $1.updatedDate }
-    }
-
     var body: some View {
         Group {
             if !unlocked {
                 lockedGate
-            } else if vaultItems.isEmpty {
-                emptyVault
             } else {
-                vaultList
+                disclosureList
             }
         }
         .navigationTitle("Vault")
@@ -31,11 +23,6 @@ struct VaultView: View {
         #endif
         .toolbar {
             if unlocked {
-                ToolbarItem(placement: .primaryAction) {
-                    Button { showingNewRecord = true } label: {
-                        Label("New Record", systemImage: "plus")
-                    }
-                }
                 ToolbarItem(placement: .secondaryAction) {
                     Button {
                         unlocked = false
@@ -45,10 +32,6 @@ struct VaultView: View {
                 }
             }
         }
-        .onChange(of: showingNewRecord) { _, presenting in
-            // Re-lock if user navigates away mid-session
-            if !presenting && !unlocked { /* no-op */ }
-        }
     }
 
     // MARK: - Locked gate
@@ -57,7 +40,7 @@ struct VaultView: View {
         ContentUnavailableView {
             Label("Vault Locked", systemImage: "lock.shield.fill")
         } description: {
-            Text("Use Face ID or Touch ID to unlock the Vault. Holds private media and secure notes.")
+            Text("Use Face ID or Touch ID to unlock the Vault. Contains private media, transcriptions, and secure notes.")
             if let authError {
                 Text(authError)
                     .font(.caption)
@@ -100,12 +83,95 @@ struct VaultView: View {
         }
     }
 
-    // MARK: - Vault list
+    // MARK: - Three-row disclosure (Media / Transcription / Secure Notes)
 
-    private var vaultList: some View {
+    private func count(of type: ItemType) -> Int {
+        store.items.filter { !$0.archived && $0.type == type }.count
+    }
+
+    private var disclosureList: some View {
+        List {
+            Section {
+                NavigationLink {
+                    VaultSubsectionView(store: store, type: .media, showingNewRecord: $showingNewRecord)
+                } label: {
+                    disclosureRow(label: "Media", symbol: "photo", count: count(of: .media))
+                }
+                NavigationLink {
+                    VaultSubsectionView(store: store, type: .transcription, showingNewRecord: $showingNewRecord)
+                } label: {
+                    disclosureRow(label: "Transcription", symbol: "waveform", count: count(of: .transcription))
+                }
+                NavigationLink {
+                    VaultSubsectionView(store: store, type: .secureNote, showingNewRecord: $showingNewRecord)
+                } label: {
+                    disclosureRow(label: "Secure Notes", symbol: "lock.doc", count: count(of: .secureNote))
+                }
+            } header: {
+                Text("Private")
+            } footer: {
+                Text("Records here stay behind biometric authentication. Tap a section to drill in.")
+            }
+        }
+    }
+
+    private func disclosureRow(label: String, symbol: String, count: Int) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: symbol)
+                .foregroundStyle(.tint)
+                .frame(width: 28)
+            Text(label)
+                .font(.body)
+            Spacer()
+            Text("\(count)")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(.thinMaterial, in: Capsule())
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+// MARK: - Sub-section view (filtered by single vault-only type)
+
+struct VaultSubsectionView: View {
+    let store: OperatorStore
+    let type: ItemType
+    @Binding var showingNewRecord: Bool
+
+    private var items: [OperatorItem] {
+        store.items
+            .filter { !$0.archived && $0.type == type }
+            .sorted { $0.updatedDate > $1.updatedDate }
+    }
+
+    var body: some View {
+        Group {
+            if items.isEmpty {
+                empty
+            } else {
+                list
+            }
+        }
+        .navigationTitle(type.label)
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button { showingNewRecord = true } label: {
+                    Label("New \(type.label)", systemImage: "plus")
+                }
+            }
+        }
+    }
+
+    private var list: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: AppTheme.cardSpacing) {
-                ForEach(vaultItems) { item in
+                ForEach(items) { item in
                     NavigationLink(value: item.id) {
                         OperatorCard(item: item)
                     }
@@ -129,18 +195,27 @@ struct VaultView: View {
         }
     }
 
-    private var emptyVault: some View {
+    private var empty: some View {
         ContentUnavailableView {
-            Label("Vault is empty", systemImage: "tray.full")
+            Label("No \(type.label.lowercased()) yet", systemImage: type.symbol)
         } description: {
-            Text("Media and secure notes you create here stay behind biometric authentication. Tap the plus button to add your first private record.")
+            Text(emptyMessage)
         } actions: {
             Button {
                 showingNewRecord = true
             } label: {
-                Label("New Record", systemImage: "plus")
+                Label("New \(type.label)", systemImage: "plus")
             }
             .buttonStyle(.borderedProminent)
+        }
+    }
+
+    private var emptyMessage: String {
+        switch type {
+        case .media: return "Photos, videos, and other media you want kept private. Tap the plus button to add the first one."
+        case .transcription: return "Voice memos transcribed and kept inside the Vault. Tap the plus button to record."
+        case .secureNote: return "Notes that should stay behind biometric authentication. Tap the plus button to add one."
+        default: return "Records of this type appear here."
         }
     }
 }
