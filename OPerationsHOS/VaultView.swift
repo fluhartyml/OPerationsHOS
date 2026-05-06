@@ -32,6 +32,16 @@ struct VaultView: View {
                 }
             }
         }
+        .onAppear {
+            // Auto-trigger biometric on tab appearance if still locked.
+            if !unlocked && !authenticating {
+                authenticate()
+            }
+        }
+        .onDisappear {
+            // Re-lock the moment the user leaves the tab — every visit re-authenticates.
+            unlocked = false
+        }
     }
 
     // MARK: - Locked gate
