@@ -87,6 +87,70 @@
 <li></li>
 <li>Dashboard &rarr; tap record &rarr; detail view &rarr; edit record &rarr; save locally. <em>(Reached at the end of Phase 6.)</em></li>
 <li></li>
+<li><hr></li>
+<li><h2>Phase 18+ &mdash; v2.0 Architecture (locked 2026-05-05)</h2></li>
+<li><em>UX overhaul. Phases 0-17 shipped a working app; Phase 18+ is the first full-featured rework, driven by a working session with Michael on iPad.</em></li>
+<li></li>
+<li><h3>Tab structure (locked)</h3></li>
+<li><table>
+<tr><th>#</th><th>Tab</th><th>Role</th></tr>
+<tr><td>1</td><td>Dashboard</td><td>Overview &mdash; existing</td></tr>
+<tr><td>2</td><td><strong>Inbox</strong></td><td>Unfiled / orphan records (existing Dashboard inbox section, promoted to its own tab)</td></tr>
+<tr><td>3</td><td><strong>Schedule</strong></td><td>Calendar-native agenda list, augment-not-replace</td></tr>
+<tr><td>4</td><td><strong>Reminders</strong></td><td>Reminders.app-native, EventKit two-way sync</td></tr>
+<tr><td>5&ndash;10</td><td>Typed modules</td><td>Systems &middot; Maintenance &middot; Projects &middot; People &middot; Timers &middot; Property</td></tr>
+<tr><td>11</td><td><strong>Vault</strong></td><td>Biometrically gated &mdash; contains Media + Secure Notes</td></tr>
+<tr><td>12</td><td>Settings</td><td>existing</td></tr>
+</table></li>
+<li>Notes: Media tab is removed (folds into Vault). "Secure Notes" is a new ItemType case that exists only inside Vault.</li>
+<li></li>
+<li><h3>Phase 18 &mdash; Inbox tab promotion</h3></li>
+<li>&middot; Promote the existing Dashboard Inbox section to its own tab at position 2.</li>
+<li>&middot; Inbox view: list of <code>store.inbox</code> (unpinned, undated, not surfaced elsewhere).</li>
+<li>&middot; No new data model changes &mdash; the orphan filter logic is already in <code>OperatorStore</code>.</li>
+<li></li>
+<li><h3>Phase 19 &mdash; Schedule rewrite</h3></li>
+<li>&middot; Replace four-section ScheduleView with a calendar-native agenda list (inspired by Apple Calendar's List view).</li>
+<li>&middot; Segmented control at top: <strong>OPerationsHOS</strong> (default, editable) / <strong>All Calendars</strong> (read-only context).</li>
+<li>&middot; OPerationsHOS calendar is the editable, first-class one &mdash; only it gets AlarmKit alarms, Lock Screen widgets / complications, and Dynamic Island.</li>
+<li>&middot; All Calendars view is read-only, pulls from every calendar the user has granted access to.</li>
+<li></li>
+<li><h3>Phase 20 &mdash; EventKit two-way sync</h3></li>
+<li>&middot; <code>NSCalendarsFullAccessUsageDescription</code> + <code>NSRemindersFullAccessUsageDescription</code> in Info.plist.</li>
+<li>&middot; Create dedicated <strong>OPerationsHOS</strong> calendar in user's account on first launch (and dedicated <strong>OPerationsHOS</strong> reminders list).</li>
+<li>&middot; Outbound: OperatorItems with <code>dueDate</code> sync to the dedicated calendar; OperatorItems of type Task / Reminder sync to the dedicated reminders list.</li>
+<li>&middot; Inbound: events/reminders created in Calendar.app or Reminders.app inside the dedicated containers appear in OPerationsHOS.</li>
+<li>&middot; Per-record sync state: <code>eventIdentifier</code> + <code>reminderIdentifier</code> on OperatorItem.</li>
+<li></li>
+<li><h3>Phase 21 &mdash; Reminders tab</h3></li>
+<li>&middot; New tab modeled on Reminders.app: list of items with checkboxes, due dates, optional alarms, grouped by section.</li>
+<li>&middot; Backed by EKReminder via the dedicated OPerationsHOS reminders list.</li>
+<li>&middot; Two-way sync (per Phase 20) &mdash; checking an item completes it in Reminders.app too.</li>
+<li></li>
+<li><h3>Phase 22 &mdash; AlarmKit integration on Timer records</h3></li>
+<li>&middot; <code>NSAlarmKitUsageDescription</code> in Info.plist.</li>
+<li>&middot; Starting an OPerationsHOS Timer registers an AlarmKit timer for the system Lock Screen / Dynamic Island / completion alarm.</li>
+<li>&middot; New Widget Extension target hosts the countdown Live Activity (AlarmKit requires this for any countdown presentation, otherwise the system may dismiss alarms).</li>
+<li>&middot; AlarmKit is OPerationsHOS-calendar-only; other-calendar events don't get alarm registration.</li>
+<li>&middot; Reference: <a href="../../inkwell/Claudes%20X26%20Swift6%20Bible/Claudes%20X26%20Swift6%20Bible/BibleContent.bundle/Appendices/Appendix-C-AlarmKit/Appendix-C-AlarmKit.html">AlarmKit User's Manual</a> (Bible Appendix C, written 2026-05-05).</li>
+<li></li>
+<li><h3>Phase 23 &mdash; Vault</h3></li>
+<li>&middot; Repurpose Vault tab from universal-catch-all to biometrically gated container.</li>
+<li>&middot; LocalAuthentication framework: Face ID / Touch ID gate on tab entry. No encryption &mdash; just biometric access control.</li>
+<li>&middot; Contains: Media records (the existing Media type, now Vault-only) + Secure Notes (new ItemType case).</li>
+<li>&middot; Records inside Vault are excluded from Dashboard sections, Inbox, search results outside Vault, and exports outside Vault.</li>
+<li>&middot; Removes the standalone Media tab.</li>
+<li></li>
+<li><h3>Phase 24 &mdash; Lock Screen widgets / complications</h3></li>
+<li>&middot; WidgetKit configurations for OPerationsHOS dashboard data on Lock Screen and Home Screen.</li>
+<li>&middot; Live Activity for in-progress AlarmKit timers (via the Phase 22 widget extension target).</li>
+<li>&middot; OPerationsHOS-calendar-only.</li>
+<li></li>
+<li><h3>Discipline (carries from v1)</h3></li>
+<li>&middot; Universal record first; modules later as filtered lenses (no per-type detail views).</li>
+<li>&middot; One file at a time; no extra abstractions / services / managers / coordinators.</li>
+<li>&middot; Phase order is a guide, not a contract &mdash; small lifts forward when product reality calls.</li>
+<li></li>
 <li><em>&mdash; End of roadmap &mdash;</em></li>
 </ol>
 <div class="filename-footer">ChatGPT/OPerationsHOS/ROADMAP.html</div>
