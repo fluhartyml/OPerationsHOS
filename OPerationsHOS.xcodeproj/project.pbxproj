@@ -51,6 +51,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C082E4D62FAF768400ABA002 /* OPerationsHOSWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OPerationsHOSWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		C0A3DE432FA94C2600B622CF /* OPerationsHOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OPerationsHOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A3DE542FA94C2700B622CF /* OPerationsHOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OPerationsHOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A3DE5E2FA94C2700B622CF /* OPerationsHOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OPerationsHOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +143,7 @@
 		C0A3DE3A2FA94C2600B622CF = {
 			isa = PBXGroup;
 			children = (
+				C082E4D62FAF768400ABA002 /* OPerationsHOSWidgetsExtension.entitlements */,
 				C0A3DE452FA94C2600B622CF /* OPerationsHOS */,
 				C0A3DE572FA94C2700B622CF /* OPerationsHOSTests */,
 				C0A3DE612FA94C2700B622CF /* OPerationsHOSUITests */,
@@ -400,6 +402,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOS/OPerationsHOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
@@ -445,6 +448,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOS/OPerationsHOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
@@ -708,6 +712,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOSWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
@@ -740,6 +745,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOSWidgetsExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;

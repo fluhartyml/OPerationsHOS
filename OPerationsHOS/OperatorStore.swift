@@ -23,6 +23,7 @@ final class OperatorStore {
         } catch {
             self.items = []
         }
+        WidgetSnapshotPublisher.publish(from: self)
     }
 
     // MARK: - Lookup
