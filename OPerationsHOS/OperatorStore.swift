@@ -1,6 +1,11 @@
 import Foundation
 import Observation
 import SwiftData
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 @MainActor
 @Observable
@@ -249,14 +254,15 @@ final class OperatorStore {
     /// Bundles a placeholder image with the Property Photo Set sample record so the
     /// Media detail view has real content instead of an empty attachments section.
     /// No-op if the record already has at least one attachment, so re-populating is safe.
+    /// Uses NSDataAsset so the PNG bytes survive Xcode's CGBI optimization untouched
+    /// (raw bundle PNGs at app-root are optimized into a format Quick Look can't render).
     private func attachSampleAssetsIfNeeded() {
         let propertyPhotoSetID = SampleData.propertyPhotoSetID
         guard let record = items.first(where: { $0.id == propertyPhotoSetID }) else { return }
         guard (record.attachments ?? []).isEmpty else { return }
-        guard let url = Bundle.main.url(forResource: "PropertyYardDiagram", withExtension: "png"),
-              let data = try? Data(contentsOf: url) else { return }
+        guard let asset = NSDataAsset(name: "PropertyYardDiagram") else { return }
         do {
-            let info = try AttachmentStorage.write(data: data, suggestedExtension: "png")
+            let info = try AttachmentStorage.write(data: asset.data, suggestedExtension: "png")
             let attachment = Attachment(
                 filename: info.filename,
                 originalName: "Property Yard Diagram.png",
