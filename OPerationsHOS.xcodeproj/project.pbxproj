@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C0ACAFAE2FAAD9630062B2C2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */; };
+		C0ACAFB02FAAD9630062B2C2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */; };
+		C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		C0A3DE552FA94C2700B622CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +27,36 @@
 			remoteGlobalIDString = C0A3DE422FA94C2600B622CF;
 			remoteInfo = OPerationsHOS;
 		};
+		C0ACAFBF2FAAD9640062B2C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C0A3DE3B2FA94C2600B622CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0ACAFAA2FAAD9630062B2C2;
+			remoteInfo = OPerationsHOSWidgetsExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C0ACAFC22FAAD9640062B2C2 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C0A3DE432FA94C2600B622CF /* OPerationsHOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OPerationsHOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A3DE542FA94C2700B622CF /* OPerationsHOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OPerationsHOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A3DE5E2FA94C2700B622CF /* OPerationsHOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OPerationsHOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OPerationsHOSWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +66,13 @@
 				Info.plist,
 			);
 			target = C0A3DE422FA94C2600B622CF /* OPerationsHOS */;
+		};
+		C0ACAFC62FAAD9640062B2C2 /* Exceptions for "OPerationsHOSWidgets" folder in "OPerationsHOSWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -56,6 +93,14 @@
 		C0A3DE612FA94C2700B622CF /* OPerationsHOSUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = OPerationsHOSUITests;
+			sourceTree = "<group>";
+		};
+		C0ACAFB12FAAD9630062B2C2 /* OPerationsHOSWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C0ACAFC62FAAD9640062B2C2 /* Exceptions for "OPerationsHOSWidgets" folder in "OPerationsHOSWidgetsExtension" target */,
+			);
+			path = OPerationsHOSWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,6 +127,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0ACAFA82FAAD9630062B2C2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0ACAFB02FAAD9630062B2C2 /* SwiftUI.framework in Frameworks */,
+				C0ACAFAE2FAAD9630062B2C2 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -91,6 +145,8 @@
 				C0A3DE452FA94C2600B622CF /* OPerationsHOS */,
 				C0A3DE572FA94C2700B622CF /* OPerationsHOSTests */,
 				C0A3DE612FA94C2700B622CF /* OPerationsHOSUITests */,
+				C0ACAFB12FAAD9630062B2C2 /* OPerationsHOSWidgets */,
+				C0ACAFAC2FAAD9630062B2C2 /* Frameworks */,
 				C0A3DE442FA94C2600B622CF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +157,18 @@
 				C0A3DE432FA94C2600B622CF /* OPerationsHOS.app */,
 				C0A3DE542FA94C2700B622CF /* OPerationsHOSTests.xctest */,
 				C0A3DE5E2FA94C2700B622CF /* OPerationsHOSUITests.xctest */,
+				C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C0ACAFAC2FAAD9630062B2C2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */,
+				C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,10 +181,12 @@
 				C0A3DE3F2FA94C2600B622CF /* Sources */,
 				C0A3DE402FA94C2600B622CF /* Frameworks */,
 				C0A3DE412FA94C2600B622CF /* Resources */,
+				C0ACAFC22FAAD9640062B2C2 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C0ACAFC02FAAD9640062B2C2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C0A3DE452FA94C2600B622CF /* OPerationsHOS */,
@@ -176,6 +244,28 @@
 			productReference = C0A3DE5E2FA94C2700B622CF /* OPerationsHOSUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0ACAFC52FAAD9640062B2C2 /* Build configuration list for PBXNativeTarget "OPerationsHOSWidgetsExtension" */;
+			buildPhases = (
+				C0ACAFA72FAAD9630062B2C2 /* Sources */,
+				C0ACAFA82FAAD9630062B2C2 /* Frameworks */,
+				C0ACAFA92FAAD9630062B2C2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C0ACAFB12FAAD9630062B2C2 /* OPerationsHOSWidgets */,
+			);
+			name = OPerationsHOSWidgetsExtension;
+			packageProductDependencies = (
+			);
+			productName = OPerationsHOSWidgetsExtension;
+			productReference = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -197,6 +287,9 @@
 						CreatedOnToolsVersion = 26.4;
 						TestTargetID = C0A3DE422FA94C2600B622CF;
 					};
+					C0ACAFAA2FAAD9630062B2C2 = {
+						CreatedOnToolsVersion = 26.4;
+					};
 				};
 			};
 			buildConfigurationList = C0A3DE3E2FA94C2600B622CF /* Build configuration list for PBXProject "OPerationsHOS" */;
@@ -216,6 +309,7 @@
 				C0A3DE422FA94C2600B622CF /* OPerationsHOS */,
 				C0A3DE532FA94C2700B622CF /* OPerationsHOSTests */,
 				C0A3DE5D2FA94C2700B622CF /* OPerationsHOSUITests */,
+				C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +330,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C0A3DE5C2FA94C2700B622CF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0ACAFA92FAAD9630062B2C2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +367,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0ACAFA72FAAD9630062B2C2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +386,11 @@
 			isa = PBXTargetDependency;
 			target = C0A3DE422FA94C2600B622CF /* OPerationsHOS */;
 			targetProxy = C0A3DE5F2FA94C2700B622CF /* PBXContainerItemProxy */;
+		};
+		C0ACAFC02FAAD9640062B2C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */;
+			targetProxy = C0ACAFBF2FAAD9640062B2C2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -590,6 +703,71 @@
 			};
 			name = Release;
 		};
+		C0ACAFC32FAAD9640062B2C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X3F6UJ44H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OPerationsHOSWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OPerationsHOSWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ChatGPT.OPerationsHOS.OPerationsHOSWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C0ACAFC42FAAD9640062B2C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X3F6UJ44H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OPerationsHOSWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OPerationsHOSWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ChatGPT.OPerationsHOS.OPerationsHOSWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -625,6 +803,15 @@
 			buildConfigurations = (
 				C0A3DE702FA94C2700B622CF /* Debug */,
 				C0A3DE712FA94C2700B622CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0ACAFC52FAAD9640062B2C2 /* Build configuration list for PBXNativeTarget "OPerationsHOSWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0ACAFC32FAAD9640062B2C2 /* Debug */,
+				C0ACAFC42FAAD9640062B2C2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
