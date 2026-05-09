@@ -1,88 +1,165 @@
-//
-//  OPerationsHOSWidgets.swift
-//  OPerationsHOSWidgets
-//
-//  Created by Michael Fluharty on 5/5/26.
-//
-
 import WidgetKit
 import SwiftUI
 
-struct Provider: AppIntentTimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
-    }
+// MARK: - Timeline entry
 
-    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
-    }
-    
-    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
-
-        return Timeline(entries: entries, policy: .atEnd)
-    }
-
-//    func relevances() async -> WidgetRelevances<ConfigurationAppIntent> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
-}
-
-struct SimpleEntry: TimelineEntry {
+struct OperationsEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
+    let snapshot: WidgetSnapshot
 }
 
-struct OPerationsHOSWidgetsEntryView : View {
-    var entry: Provider.Entry
+// MARK: - Provider
+
+struct Provider: AppIntentTimelineProvider {
+    func placeholder(in context: Context) -> OperationsEntry {
+        OperationsEntry(
+            date: .now,
+            configuration: ConfigurationAppIntent(),
+            snapshot: .placeholder
+        )
+    }
+
+    func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> OperationsEntry {
+        OperationsEntry(
+            date: .now,
+            configuration: configuration,
+            snapshot: WidgetSnapshot.read() ?? .placeholder
+        )
+    }
+
+    func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<OperationsEntry> {
+        let snapshot = WidgetSnapshot.read() ?? .empty
+        let entry = OperationsEntry(date: .now, configuration: configuration, snapshot: snapshot)
+        // Refresh hourly — main app refresh hooks update sooner via WidgetCenter.shared.reloadAllTimelines()
+        let next = Calendar.current.date(byAdding: .hour, value: 1, to: .now) ?? .now.addingTimeInterval(3600)
+        return Timeline(entries: [entry], policy: .after(next))
+    }
+}
+
+// MARK: - Entry view
+
+struct OperationsEntryView: View {
+    let entry: OperationsEntry
+    @Environment(\.widgetFamily) private var family
+
+    private var rows: [WidgetSnapshot.Row] {
+        switch entry.configuration.view {
+        case .today:  return entry.snapshot.today
+        case .pinned: return entry.snapshot.pinned
+        case .inbox:  return entry.snapshot.inbox
+        }
+    }
+
+    private var sectionTitle: String {
+        switch entry.configuration.view {
+        case .today:  return "Today"
+        case .pinned: return "Pinned"
+        case .inbox:  return "Inbox"
+        }
+    }
+
+    private var sectionSymbol: String {
+        switch entry.configuration.view {
+        case .today:  return "sun.max"
+        case .pinned: return "pin.fill"
+        case .inbox:  return "tray"
+        }
+    }
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: sectionSymbol)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tint)
+                Text(sectionTitle)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                if !entry.snapshot.isPlaceholder {
+                    Text("\(rows.count)")
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+            }
 
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+            if entry.snapshot.isPlaceholder {
+                placeholderBody
+            } else if rows.isEmpty {
+                emptyBody
+            } else {
+                rowsBody
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    private var placeholderBody: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("OPerationsHOS")
+                .font(.headline)
+            Text("Open the app to start tracking.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var emptyBody: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Nothing in \(sectionTitle).")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var rowsBody: some View {
+        let visible = Array(rows.prefix(family == .systemSmall ? 2 : 4))
+        VStack(alignment: .leading, spacing: 3) {
+            ForEach(visible, id: \.id) { row in
+                HStack(spacing: 6) {
+                    Image(systemName: row.symbol)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 14)
+                    Text(row.title)
+                        .font(.caption)
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                }
+            }
+            if rows.count > visible.count {
+                Text("+\(rows.count - visible.count) more")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
         }
     }
 }
+
+// MARK: - Widget
 
 struct OPerationsHOSWidgets: Widget {
     let kind: String = "OPerationsHOSWidgets"
 
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
-            OPerationsHOSWidgetsEntryView(entry: entry)
+            OperationsEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
+        .configurationDisplayName("OPerationsHOS")
+        .description("Today, Pinned, or Inbox at a glance.")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
 
-extension ConfigurationAppIntent {
-    fileprivate static var smiley: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "😀"
-        return intent
-    }
-    
-    fileprivate static var starEyes: ConfigurationAppIntent {
-        let intent = ConfigurationAppIntent()
-        intent.favoriteEmoji = "🤩"
-        return intent
-    }
-}
+// MARK: - Previews
 
 #Preview(as: .systemSmall) {
     OPerationsHOSWidgets()
 } timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
+    OperationsEntry(date: .now, configuration: ConfigurationAppIntent(), snapshot: .placeholder)
+    OperationsEntry(date: .now, configuration: ConfigurationAppIntent(), snapshot: .empty)
 }

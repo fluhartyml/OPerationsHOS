@@ -1,18 +1,28 @@
-//
-//  AppIntent.swift
-//  OPerationsHOSWidgets
-//
-//  Created by Michael Fluharty on 5/5/26.
-//
-
 import WidgetKit
 import AppIntents
 
-struct ConfigurationAppIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource { "Configuration" }
-    static var description: IntentDescription { "This is an example widget." }
+enum WidgetView: String, AppEnum {
+    case today
+    case pinned
+    case inbox
 
-    // An example configurable parameter.
-    @Parameter(title: "Favorite Emoji", default: "😃")
-    var favoriteEmoji: String
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        TypeDisplayRepresentation(name: "Widget View")
+    }
+
+    static var caseDisplayRepresentations: [WidgetView: DisplayRepresentation] {
+        [
+            .today: DisplayRepresentation(title: "Today"),
+            .pinned: DisplayRepresentation(title: "Pinned"),
+            .inbox: DisplayRepresentation(title: "Inbox"),
+        ]
+    }
+}
+
+struct ConfigurationAppIntent: WidgetConfigurationIntent {
+    static var title: LocalizedStringResource { "OPerationsHOS Widget" }
+    static var description: IntentDescription { IntentDescription("Pick which slice of OPerationsHOS the widget surfaces.") }
+
+    @Parameter(title: "Show", default: .today)
+    var view: WidgetView
 }

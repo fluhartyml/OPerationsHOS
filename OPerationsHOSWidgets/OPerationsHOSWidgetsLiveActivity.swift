@@ -1,80 +1,83 @@
-//
-//  OPerationsHOSWidgetsLiveActivity.swift
-//  OPerationsHOSWidgets
-//
-//  Created by Michael Fluharty on 5/5/26.
-//
-
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct OPerationsHOSWidgetsAttributes: ActivityAttributes {
+/// Live Activity surface for an OPerationsHOS Timer record. Phase 22 wires AlarmKit
+/// to register the system alarm; this Live Activity is the in-progress UI on Lock
+/// Screen + Dynamic Island. Phase 24b will wire the timer state from the main app.
+struct OperationsTimerAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
-        // Dynamic stateful properties about your activity go here!
-        var emoji: String
+        var endDate: Date
+        var label: String
     }
 
-    // Fixed non-changing properties about your activity go here!
-    var name: String
+    var timerName: String
 }
 
 struct OPerationsHOSWidgetsLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: OPerationsHOSWidgetsAttributes.self) { context in
-            // Lock screen/banner UI goes here
-            VStack {
-                Text("Hello \(context.state.emoji)")
+        ActivityConfiguration(for: OperationsTimerAttributes.self) { context in
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Image(systemName: "timer")
+                        .foregroundStyle(.tint)
+                    Text(context.attributes.timerName)
+                        .font(.headline)
+                    Spacer()
+                }
+                Text(context.state.label)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(context.state.endDate, style: .timer)
+                    .font(.title.monospacedDigit())
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .padding()
+            .activityBackgroundTint(Color.black.opacity(0.6))
+            .activitySystemActionForegroundColor(Color.white)
 
         } dynamicIsland: { context in
             DynamicIsland {
-                // Expanded UI goes here.  Compose the expanded UI through
-                // various regions, like leading/trailing/center/bottom
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("Leading")
+                    Image(systemName: "timer")
+                        .foregroundStyle(.tint)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text("Trailing")
+                    Text(context.state.endDate, style: .timer)
+                        .font(.title2.monospacedDigit())
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Bottom \(context.state.emoji)")
-                    // more content
+                    Text(context.attributes.timerName)
+                        .font(.headline)
                 }
             } compactLeading: {
-                Text("L")
+                Image(systemName: "timer")
             } compactTrailing: {
-                Text("T \(context.state.emoji)")
+                Text(context.state.endDate, style: .timer)
+                    .monospacedDigit()
             } minimal: {
-                Text(context.state.emoji)
+                Image(systemName: "timer")
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
         }
     }
 }
 
-extension OPerationsHOSWidgetsAttributes {
-    fileprivate static var preview: OPerationsHOSWidgetsAttributes {
-        OPerationsHOSWidgetsAttributes(name: "World")
+extension OperationsTimerAttributes {
+    fileprivate static var preview: OperationsTimerAttributes {
+        OperationsTimerAttributes(timerName: "Pomodoro")
     }
 }
 
-extension OPerationsHOSWidgetsAttributes.ContentState {
-    fileprivate static var smiley: OPerationsHOSWidgetsAttributes.ContentState {
-        OPerationsHOSWidgetsAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: OPerationsHOSWidgetsAttributes.ContentState {
-         OPerationsHOSWidgetsAttributes.ContentState(emoji: "🤩")
-     }
+extension OperationsTimerAttributes.ContentState {
+    fileprivate static var sample: OperationsTimerAttributes.ContentState {
+        OperationsTimerAttributes.ContentState(
+            endDate: Date().addingTimeInterval(25 * 60),
+            label: "25 minutes — Phase 22 timer"
+        )
+    }
 }
 
-#Preview("Notification", as: .content, using: OPerationsHOSWidgetsAttributes.preview) {
-   OPerationsHOSWidgetsLiveActivity()
+#Preview("Timer Live Activity", as: .content, using: OperationsTimerAttributes.preview) {
+    OPerationsHOSWidgetsLiveActivity()
 } contentStates: {
-    OPerationsHOSWidgetsAttributes.ContentState.smiley
-    OPerationsHOSWidgetsAttributes.ContentState.starEyes
+    OperationsTimerAttributes.ContentState.sample
 }
