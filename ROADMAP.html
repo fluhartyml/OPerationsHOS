@@ -57,7 +57,7 @@
 <tr><th>#</th><th>Phase</th><th>What it adds</th><th>State</th></tr>
 <tr><td>6</td><td><strong>SwiftData Persistence</strong></td><td><strong>The unlock.</strong> <code>OperatorItem</code> is <code>@Model</code> class with all CloudKit-required defaults &middot; <code>ModelContainer</code> wired in <code>OPerationsHOSApp</code> &middot; relationships to <code>Attachment</code> + <code>ActivityEvent</code>. v0.1 milestone closed.</td><td><span class="check ck-done">[x]</span></td></tr>
 <tr><td>7</td><td>Modules</td><td><code>ModuleView.swift</code> hosts filtered lenses over the universal record. Per-type modules reachable via tabs / dashboard tap-through. <em>My Person CRM stays standalone (decision deferred).</em></td><td><span class="check ck-done">[x]</span></td></tr>
-<tr><td>8</td><td>Search</td><td>Across title / subtitle / body / tags / type / status / relatedSystem.</td><td><span class="check ck-todo">[ ]</span></td></tr>
+<tr><td>8</td><td>Search</td><td><code>OperatorStore.search(_:)</code> filters non-archived, non-Vault records by title / subtitle / body / tags / type / relatedSystem. <code>SearchView.swift</code> hosts <code>.searchable</code> tab with results list. Vault records excluded by design.</td><td><span class="check ck-done">[x]</span></td></tr>
 <tr><td>9</td><td>Attachments</td><td><code>Attachment.swift</code> is a <code>@Model</code> class with cascade-delete relationship inverse to <code>OperatorItem.attachments</code>.</td><td><span class="check ck-done">[x]</span></td></tr>
 <tr><td>10</td><td>Activity Log</td><td><code>ActivityEvent.swift</code> is a <code>@Model</code> class with cascade-delete relationship inverse to <code>OperatorItem.events</code>.</td><td><span class="check ck-done">[x]</span></td></tr>
 <tr><td>11</td><td>Dates &amp; Reminders</td><td>Today / Upcoming surfaces in Dashboard sections; Schedule tab handles agenda; Reminders tab handles EKReminder-backed list. Superseded by Phases 19-21.</td><td><span class="check ck-done">[x]</span></td></tr>
@@ -90,7 +90,7 @@
 <li><hr></li>
 <li><h2>Phase 18+ &mdash; v2.0 Architecture (locked 2026-05-05)</h2></li>
 <li><em>UX overhaul. Phases 0-17 shipped a working app; Phase 18+ is the first full-featured rework, driven by a working session with Michael on iPad.</em></li>
-<li><strong>Status as of 2026-05-09:</strong> Phases 18-23 all <span class="check ck-done">[x]</span> shipped (per git log). Phase 24 scaffold landed but real widget code still pending (default Xcode placeholders). Genuine v1+v2 remaining work: Phase 8 (global search) &middot; Phase 15 (iPad layout) &middot; Phase 16 (Mac layout) &middot; Phase 24 (real widget code).</li>
+<li><strong>Status as of 2026-05-09:</strong> Phases 18-23 all <span class="check ck-done">[x]</span> shipped (per git log). Phase 24 scaffold landed but real widget code still pending (default Xcode placeholders). Genuine v1+v2 remaining work: Phase 15 (iPad layout) &middot; Phase 16 (Mac layout) &middot; Phase 24 (real widget code).</li>
 <li></li>
 <li><h3>Tab structure (locked)</h3></li>
 <li><table>

@@ -222,6 +222,28 @@ final class OperatorStore {
         items.filter { $0.type == .timer && $0.runningSince != nil && !$0.archived }
     }
 
+    // MARK: - Search
+
+    /// Global search across non-archived, non-Vault records.
+    /// Vault items are excluded — they only appear in searches launched from inside the Vault.
+    func search(_ query: String) -> [OperatorItem] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+        let q = trimmed.lowercased()
+        return items.filter { item in
+            guard !item.archived else { return false }
+            guard !item.type.isVaultOnly else { return false }
+            if item.title.lowercased().contains(q) { return true }
+            if item.subtitle.lowercased().contains(q) { return true }
+            if item.body.lowercased().contains(q) { return true }
+            if item.tags.contains(where: { $0.lowercased().contains(q) }) { return true }
+            if let related = item.relatedSystem, related.lowercased().contains(q) { return true }
+            if item.type.label.lowercased().contains(q) { return true }
+            return false
+        }
+        .sorted { $0.updatedDate > $1.updatedDate }
+    }
+
     // MARK: - Section semantics
     //
     // Pin = "show on dashboard."
