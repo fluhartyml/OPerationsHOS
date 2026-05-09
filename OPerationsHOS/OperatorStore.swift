@@ -253,19 +253,33 @@ final class OperatorStore {
 
     /// Bundles a placeholder image with the Property Photo Set sample record so the
     /// Media detail view has real content instead of an empty attachments section.
-    /// No-op if the record already has at least one attachment, so re-populating is safe.
-    /// Uses NSDataAsset so the PNG bytes survive Xcode's CGBI optimization untouched
-    /// (raw bundle PNGs at app-root are optimized into a format Quick Look can't render).
+    /// Self-healing: detects any stale prior-version placeholder by originalName and
+    /// replaces it with fresh NSDataAsset bytes (raw bundle PNGs were CGBI-optimized
+    /// in older builds — Quick Look couldn't render them). User-added attachments
+    /// are left alone.
     private func attachSampleAssetsIfNeeded() {
         let propertyPhotoSetID = SampleData.propertyPhotoSetID
         guard let record = items.first(where: { $0.id == propertyPhotoSetID }) else { return }
-        guard (record.attachments ?? []).isEmpty else { return }
+
+        let placeholderName = "Property Yard Diagram.png"
+        let existing = record.attachments ?? []
+
+        // Remove any prior placeholder so the next attach lands fresh CGBI-free bytes.
+        for old in existing where old.originalName == placeholderName {
+            AttachmentStorage.delete(filename: old.filename)
+            modelContext.delete(old)
+        }
+
+        // If user-added (non-placeholder) attachments are present, don't re-add ours.
+        let userAdded = existing.filter { $0.originalName != placeholderName }
+        guard userAdded.isEmpty else { return }
+
         guard let asset = NSDataAsset(name: "PropertyYardDiagram") else { return }
         do {
             let info = try AttachmentStorage.write(data: asset.data, suggestedExtension: "png")
             let attachment = Attachment(
                 filename: info.filename,
-                originalName: "Property Yard Diagram.png",
+                originalName: placeholderName,
                 kind: .image
             )
             attach(attachment, to: record)
