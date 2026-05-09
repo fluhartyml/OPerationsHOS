@@ -217,6 +217,29 @@ final class OperatorStore {
         }
         try? modelContext.save()
         refresh()
+        attachSampleAssetsIfNeeded()
+    }
+
+    /// Bundles a placeholder image with the Property Photo Set sample record so the
+    /// Media detail view has real content instead of an empty attachments section.
+    /// No-op if the record already has at least one attachment, so re-populating is safe.
+    private func attachSampleAssetsIfNeeded() {
+        let propertyPhotoSetID = SampleData.propertyPhotoSetID
+        guard let record = items.first(where: { $0.id == propertyPhotoSetID }) else { return }
+        guard (record.attachments ?? []).isEmpty else { return }
+        guard let url = Bundle.main.url(forResource: "PropertyYardDiagram", withExtension: "png"),
+              let data = try? Data(contentsOf: url) else { return }
+        do {
+            let info = try AttachmentStorage.write(data: data, suggestedExtension: "png")
+            let attachment = Attachment(
+                filename: info.filename,
+                originalName: "Property Yard Diagram.png",
+                kind: .image
+            )
+            attach(attachment, to: record)
+        } catch {
+            // Silent — sample populate completes without the placeholder.
+        }
     }
 
     func runningTimers() -> [OperatorItem] {

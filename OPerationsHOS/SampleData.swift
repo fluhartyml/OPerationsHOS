@@ -21,6 +21,10 @@ enum SampleData {
         id1, id2, id3, id4, id5, id6, id7, id8, id9, id10, id11, id12
     ]
 
+    /// Exposed so OperatorStore can find the Media sample after populate
+    /// to attach the bundled placeholder diagram.
+    static let propertyPhotoSetID: UUID = id10
+
     @MainActor
     static func allSamples() -> [OperatorItem] {
         let cal = Calendar.current
