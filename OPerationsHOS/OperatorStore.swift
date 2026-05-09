@@ -23,7 +23,33 @@ final class OperatorStore {
         } catch {
             self.items = []
         }
+        deduplicateByID()
         WidgetSnapshotPublisher.publish(from: self)
+    }
+
+    /// Removes duplicate records that share the same logical `id`. Duplicates appear
+    /// when populate runs on multiple devices before CloudKit sync settles — SwiftData
+    /// has no unique constraint on `id` at the schema level, so it accepts both inserts
+    /// and CloudKit merges them. This sweep keeps the most-recently-updated copy per id
+    /// and deletes the rest. Idempotent: runs on every refresh, no-op when no dupes.
+    private func deduplicateByID() {
+        let grouped = Dictionary(grouping: items, by: { $0.id })
+        var didDelete = false
+        for (_, group) in grouped where group.count > 1 {
+            let sorted = group.sorted { $0.updatedDate > $1.updatedDate }
+            for duplicate in sorted.dropFirst() {
+                modelContext.delete(duplicate)
+                didDelete = true
+            }
+        }
+        if didDelete {
+            try? modelContext.save()
+            // Re-fetch to drop the deleted instances from `items` without re-entering refresh().
+            let descriptor = FetchDescriptor<OperatorItem>(
+                sortBy: [SortDescriptor(\.updatedDate, order: .reverse)]
+            )
+            self.items = (try? modelContext.fetch(descriptor)) ?? items.filter { !$0.isDeleted }
+        }
     }
 
     // MARK: - Lookup
