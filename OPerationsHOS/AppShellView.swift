@@ -11,12 +11,17 @@ struct AppShellView: View {
 
 private struct AppShellInner: View {
     @State private var store: OperatorStore
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     init(modelContext: ModelContext) {
         _store = State(initialValue: OperatorStore(modelContext: modelContext))
     }
 
     var body: some View {
-        RootTabView(store: store)
+        if horizontalSizeClass == .regular {
+            IPadShellView(store: store)
+        } else {
+            RootTabView(store: store)
+        }
     }
 }
