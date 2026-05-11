@@ -28,11 +28,17 @@ struct SearchView: View {
                         SearchRow(item: item)
                     }
                 }
+                #if os(iOS)
                 .listStyle(.insetGrouped)
+                #endif
             }
         }
         .navigationTitle("Search")
+        #if os(iOS)
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
+        #else
+        .searchable(text: $query)
+        #endif
     }
 }
 

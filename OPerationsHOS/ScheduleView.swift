@@ -135,7 +135,7 @@ struct ScheduleView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 6)
-        .background(Color(.systemBackground).opacity(0.94))
+        .background(.background.opacity(0.94))
     }
 
     private var emptyOperations: some View {

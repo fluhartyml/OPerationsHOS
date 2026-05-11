@@ -18,10 +18,14 @@ private struct AppShellInner: View {
     }
 
     var body: some View {
+        #if os(macOS)
+        MacShellView(store: store)
+        #else
         if horizontalSizeClass == .regular {
             IPadShellView(store: store)
         } else {
             RootTabView(store: store)
         }
+        #endif
     }
 }

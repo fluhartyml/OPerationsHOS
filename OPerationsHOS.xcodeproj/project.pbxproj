@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		C0ACAFAE2FAAD9630062B2C2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */; };
 		C0ACAFB02FAAD9630062B2C2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */; };
-		C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */

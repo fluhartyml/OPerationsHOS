@@ -95,12 +95,10 @@ struct OPerationsHOSAlarmMetadata: AlarmMetadata {
 }
 #endif
 
+#if canImport(AlarmKit)
 extension AlarmButton {
     static var stopButton: AlarmButton {
-        #if canImport(AlarmKit)
-        return AlarmButton(text: "Stop", textColor: .white, systemImageName: "stop.fill")
-        #else
-        return AlarmButton()
-        #endif
+        AlarmButton(text: "Stop", textColor: .white, systemImageName: "stop.fill")
     }
 }
+#endif
