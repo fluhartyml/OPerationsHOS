@@ -255,7 +255,7 @@ struct RecordDetailView: View {
 
     private func metadata(for item: OperatorItem) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            row("Status", item.status.label)
+            row("Status", statusDisplay(for: item))
             row("Priority", item.priority.label)
             if let due = item.dueDate {
                 row("Due", due.formatted(date: .abbreviated, time: .omitted))
@@ -269,6 +269,15 @@ struct RecordDetailView: View {
         .padding(AppTheme.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
+    }
+
+    /// Surface the status-date gap explicitly: "Scheduled" without a date is
+    /// incomplete data; the user needs to either set a date or change the status.
+    private func statusDisplay(for item: OperatorItem) -> String {
+        if item.status == .scheduled && item.dueDate == nil {
+            return "\(item.status.label) (date pending)"
+        }
+        return item.status.label
     }
 
     private func row(_ label: String, _ value: String) -> some View {
