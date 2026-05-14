@@ -6,6 +6,8 @@ struct SettingsView: View {
     @State private var apiKey: String = ""
     @State private var savedConfirmation: Bool = false
     @State private var showingExport: Bool = false
+    @State private var showingPopulateResult: Bool = false
+    @State private var populateResultText: String = ""
 
     init(store: OperatorStore? = nil) {
         self.store = store
@@ -16,14 +18,27 @@ struct SettingsView: View {
             if let store {
                 Section {
                     Button {
-                        store.populateSampleRecords()
+                        let result = store.populateSampleRecords()
+                        if result.inserted == 0 && result.refreshed > 0 {
+                            populateResultText = "Refreshed dates on \(result.refreshed) existing sample\(result.refreshed == 1 ? "" : "s"). No new records added."
+                        } else if result.inserted > 0 && result.refreshed == 0 {
+                            populateResultText = "Added \(result.inserted) new sample record\(result.inserted == 1 ? "" : "s")."
+                        } else {
+                            populateResultText = "Added \(result.inserted) new record\(result.inserted == 1 ? "" : "s"), refreshed dates on \(result.refreshed) existing."
+                        }
+                        showingPopulateResult = true
                     } label: {
                         Label("Populate sample records", systemImage: "tray.and.arrow.down")
                     }
                 } header: {
                     Text("Sample Records")
                 } footer: {
-                    Text("Adds twelve example records — one of each type — to give you a working tour of the app. Tapping again restores any you've deleted; existing ones stay put. To clear everything, delete and reinstall the app.")
+                    Text("Adds fifteen example records covering the main item types plus two preset focus timers (Pomodoro 25/5 and Deep Work 90). Tapping again refreshes the sample dates to today's anchor and restores any you've deleted; existing record content stays put. To clear everything, delete and reinstall the app.")
+                }
+                .alert("Sample Records", isPresented: $showingPopulateResult) {
+                    Button("OK") { }
+                } message: {
+                    Text(populateResultText)
                 }
 
                 Section {

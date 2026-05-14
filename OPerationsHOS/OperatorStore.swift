@@ -241,21 +241,27 @@ final class OperatorStore {
     /// "Sun May 10 shows first" artifacts from a populate run days ago).
     /// User edits to title/body/status/tags are preserved; only the date scaffolding
     /// regenerates on each call.
-    func populateSampleRecords() {
+    @discardableResult
+    func populateSampleRecords() -> (inserted: Int, refreshed: Int) {
         let existingByID = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
+        var inserted = 0
+        var refreshed = 0
         for sample in SampleData.allSamples() {
             if let existing = existingByID[sample.id] {
                 existing.createdDate = sample.createdDate
                 existing.updatedDate = sample.updatedDate
                 existing.dueDate = sample.dueDate
+                refreshed += 1
             } else {
                 modelContext.insert(sample)
                 log(.created, on: sample, details: sample.title)
+                inserted += 1
             }
         }
         try? modelContext.save()
         refresh()
         attachSampleAssetsIfNeeded()
+        return (inserted, refreshed)
     }
 
     /// Bundles a placeholder image with the Property Photo Set sample record so the
