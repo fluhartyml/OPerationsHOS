@@ -88,15 +88,15 @@ struct IPadShellView: View {
     private var sidebar: some View {
         List(selection: $selectedTab) {
             Section { rows([.search]) }
-            Section { rows([.dashboard]) }
-            Section("Records") {
-                rows([.inbox, .schedule, .reminders, .people])
+            Section("Meta") {
+                rows([.dashboard, .settings, .vault])
             }
             Section("Operations") {
-                rows([.systems, .timers, .maintenance, .projects, .property])
+                rows([.inbox, .systems, .maintenance, .projects, .property, .people])
             }
-            Section { rows([.vault]) }
-            Section { rows([.settings]) }
+            Section("Time Management") {
+                rows([.schedule, .reminders, .timers])
+            }
         }
         .listStyle(.sidebar)
         .navigationTitle("OPerationsHOS")
