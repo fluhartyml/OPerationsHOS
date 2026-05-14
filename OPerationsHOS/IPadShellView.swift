@@ -87,17 +87,23 @@ struct IPadShellView: View {
 
     private var sidebar: some View {
         List(selection: $selectedTab) {
+            Section("Search") {
+                rows([.search])
+            }
             Section("Records") {
                 rows([.dashboard, .inbox, .schedule, .reminders])
             }
             Section("Modules") {
-                rows([.systems, .maintenance, .projects, .people, .timers, .property])
+                rows([.systems, .people, .timers])
+            }
+            Section("Stewardship") {
+                rows([.maintenance, .projects, .property])
             }
             Section("Vault") {
                 rows([.vault])
             }
             Section("Utility") {
-                rows([.search, .settings])
+                rows([.settings])
             }
         }
         .listStyle(.sidebar)
