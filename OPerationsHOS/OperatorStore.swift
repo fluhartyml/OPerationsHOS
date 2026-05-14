@@ -236,12 +236,19 @@ final class OperatorStore {
 
     // MARK: - Sample data
 
-    /// Adds any missing sample records back into the store.
-    /// Re-running is safe — existing samples are skipped, deleted ones are restored.
+    /// Adds any missing sample records back into the store and refreshes dates on
+    /// existing sample records so re-populate always anchors to today (no stale
+    /// "Sun May 10 shows first" artifacts from a populate run days ago).
+    /// User edits to title/body/status/tags are preserved; only the date scaffolding
+    /// regenerates on each call.
     func populateSampleRecords() {
-        let existingIDs = Set(items.map { $0.id })
+        let existingByID = Dictionary(uniqueKeysWithValues: items.map { ($0.id, $0) })
         for sample in SampleData.allSamples() {
-            if !existingIDs.contains(sample.id) {
+            if let existing = existingByID[sample.id] {
+                existing.createdDate = sample.createdDate
+                existing.updatedDate = sample.updatedDate
+                existing.dueDate = sample.dueDate
+            } else {
                 modelContext.insert(sample)
                 log(.created, on: sample, details: sample.title)
             }
