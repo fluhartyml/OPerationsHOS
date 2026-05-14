@@ -454,26 +454,32 @@ struct RecordDetailView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                HStack(spacing: 8) {
-                    Button {
-                        runAI(.summary, on: item)
-                    } label: {
-                        Label("Summarize", systemImage: "text.alignleft")
-                    }
-                    Button {
-                        runAI(.dates, on: item)
-                    } label: {
-                        Label("Extract Dates", systemImage: "calendar")
-                    }
-                    Button {
-                        runAI(.category, on: item)
-                    } label: {
-                        Label("Suggest Category", systemImage: "tag")
-                    }
+                Text("These send this record's content to Claude via your Anthropic API key for AI processing.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 12) {
+                    aiActionButton(
+                        title: "Summarize",
+                        systemImage: "text.alignleft",
+                        caption: "Ask Claude for a short overview of this record's notes.",
+                        kind: .summary,
+                        item: item
+                    )
+                    aiActionButton(
+                        title: "Extract Dates",
+                        systemImage: "calendar",
+                        caption: "Find dates mentioned in this record's notes and surface them.",
+                        kind: .dates,
+                        item: item
+                    )
+                    aiActionButton(
+                        title: "Suggest Category",
+                        systemImage: "tag",
+                        caption: "Ask Claude to recommend an ItemType for this record's content.",
+                        kind: .category,
+                        item: item
+                    )
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
-                .disabled(ai.isProcessing)
             }
 
             if let result = aiResult {
@@ -518,6 +524,25 @@ struct RecordDetailView: View {
             if let text {
                 aiResult = AIResult(kind: kind, text: text)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func aiActionButton(title: String, systemImage: String, caption: String, kind: AIResult.Kind, item: OperatorItem) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Button {
+                runAI(kind, on: item)
+            } label: {
+                Label(title, systemImage: systemImage)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.regular)
+            .disabled(ai.isProcessing)
+            Text(caption)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .padding(.leading, 8)
         }
     }
 
