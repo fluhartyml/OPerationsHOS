@@ -6,6 +6,7 @@ struct TimerSectionView: View {
     let store: OperatorStore
 
     @State private var tick = Date()
+    @State private var sweepAngle: Double = 0
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private var elapsed: TimeInterval {
@@ -44,41 +45,13 @@ struct TimerSectionView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .center, spacing: 16) {
             Text("Timer").font(.headline)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            HStack {
-                Text(formatted)
-                    .font(.system(.largeTitle, design: .monospaced).weight(.semibold))
-                    .foregroundStyle(isRunning ? Color.accentColor : .primary)
-                Spacer()
-                if isRunning {
-                    Button {
-                        store.stopTimer(id: item.id)
-                    } label: {
-                        Label("Stop", systemImage: "stop.fill")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.red)
-                } else {
-                    Button {
-                        store.startTimer(id: item.id)
-                    } label: {
-                        Label("Start", systemImage: "play.fill")
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-            }
+            analogDial
 
-            if !isRunning && item.accumulatedSeconds > 0 {
-                Button(role: .destructive) {
-                    store.resetTimer(id: item.id)
-                } label: {
-                    Label("Reset", systemImage: "arrow.counterclockwise")
-                        .font(.caption)
-                }
-                .buttonStyle(.bordered)
-            }
+            startStopReset
 
             Divider()
 
@@ -112,6 +85,78 @@ struct TimerSectionView: View {
         .onReceive(timer) { now in
             if isRunning {
                 tick = now
+            }
+        }
+    }
+
+    /// Circular analog dial: muted background ring, accent-colored sweep arc that
+    /// rotates while the timer is running. Time text reads from the center.
+    /// Egg-timer / pomodoro affordance — graphic-first rather than digit-only.
+    private var analogDial: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.secondary.opacity(0.25), style: StrokeStyle(lineWidth: 10, lineCap: .round))
+
+            Circle()
+                .trim(from: 0, to: 0.18)
+                .stroke(
+                    isRunning ? Color.accentColor : Color.secondary.opacity(0.35),
+                    style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                )
+                .rotationEffect(.degrees(sweepAngle - 90))
+                .animation(isRunning ? .linear(duration: 2.5).repeatForever(autoreverses: false) : .default, value: sweepAngle)
+
+            VStack(spacing: 4) {
+                Text(formatted)
+                    .font(.system(size: 44, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(isRunning ? Color.accentColor : .primary)
+                    .contentTransition(.numericText())
+                Text(isRunning ? "Running" : (elapsed > 0 ? "Paused" : "Idle"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+            }
+        }
+        .frame(width: 220, height: 220)
+        .frame(maxWidth: .infinity)
+        .onAppear {
+            if isRunning {
+                sweepAngle = 360
+            }
+        }
+        .onChange(of: isRunning) { _, nowRunning in
+            sweepAngle = nowRunning ? 360 : 0
+        }
+    }
+
+    private var startStopReset: some View {
+        HStack(spacing: 12) {
+            if isRunning {
+                Button {
+                    store.stopTimer(id: item.id)
+                } label: {
+                    Label("Stop", systemImage: "stop.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+            } else {
+                Button {
+                    store.startTimer(id: item.id)
+                } label: {
+                    Label("Start", systemImage: "play.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+
+            if !isRunning && item.accumulatedSeconds > 0 {
+                Button(role: .destructive) {
+                    store.resetTimer(id: item.id)
+                } label: {
+                    Label("Reset", systemImage: "arrow.counterclockwise")
+                }
+                .buttonStyle(.bordered)
             }
         }
     }
