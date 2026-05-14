@@ -10,6 +10,8 @@
 		C0ACAFAE2FAAD9630062B2C2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */; };
 		C0ACAFB02FAAD9630062B2C2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */; };
 		C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C3D8282FB66C3A00B80018 /* Messages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0C3D8272FB66C3A00B80018 /* Messages.framework */; };
+		C0C3D8342FB66C3B00B80018 /* OPerationsHOSiMessage.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0C3D8262FB66C3A00B80018 /* OPerationsHOSiMessage.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +36,13 @@
 			remoteGlobalIDString = C0ACAFAA2FAAD9630062B2C2;
 			remoteInfo = OPerationsHOSWidgetsExtension;
 		};
+		C0C3D8322FB66C3B00B80018 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C0A3DE3B2FA94C2600B622CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0C3D8252FB66C3A00B80018;
+			remoteInfo = OPerationsHOSiMessage;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,6 +53,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */,
+				C0C3D8342FB66C3B00B80018 /* OPerationsHOSiMessage.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +68,8 @@
 		C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OPerationsHOSWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C0C3D8262FB66C3A00B80018 /* OPerationsHOSiMessage.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OPerationsHOSiMessage.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0C3D8272FB66C3A00B80018 /* Messages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Messages.framework; path = Library/Frameworks/Messages.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -74,6 +86,13 @@
 				Info.plist,
 			);
 			target = C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */;
+		};
+		C0C3D8382FB66C3B00B80018 /* Exceptions for "OPerationsHOSiMessage" folder in "OPerationsHOSiMessage" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C0C3D8252FB66C3A00B80018 /* OPerationsHOSiMessage */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -102,6 +121,14 @@
 				C0ACAFC62FAAD9640062B2C2 /* Exceptions for "OPerationsHOSWidgets" folder in "OPerationsHOSWidgetsExtension" target */,
 			);
 			path = OPerationsHOSWidgets;
+			sourceTree = "<group>";
+		};
+		C0C3D8292FB66C3A00B80018 /* OPerationsHOSiMessage */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C0C3D8382FB66C3B00B80018 /* Exceptions for "OPerationsHOSiMessage" folder in "OPerationsHOSiMessage" target */,
+			);
+			path = OPerationsHOSiMessage;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -137,6 +164,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C3D8232FB66C3A00B80018 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C3D8282FB66C3A00B80018 /* Messages.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -148,6 +183,7 @@
 				C0A3DE572FA94C2700B622CF /* OPerationsHOSTests */,
 				C0A3DE612FA94C2700B622CF /* OPerationsHOSUITests */,
 				C0ACAFB12FAAD9630062B2C2 /* OPerationsHOSWidgets */,
+				C0C3D8292FB66C3A00B80018 /* OPerationsHOSiMessage */,
 				C0ACAFAC2FAAD9630062B2C2 /* Frameworks */,
 				C0A3DE442FA94C2600B622CF /* Products */,
 			);
@@ -160,6 +196,7 @@
 				C0A3DE542FA94C2700B622CF /* OPerationsHOSTests.xctest */,
 				C0A3DE5E2FA94C2700B622CF /* OPerationsHOSUITests.xctest */,
 				C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */,
+				C0C3D8262FB66C3A00B80018 /* OPerationsHOSiMessage.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -169,6 +206,7 @@
 			children = (
 				C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */,
 				C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */,
+				C0C3D8272FB66C3A00B80018 /* Messages.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -189,6 +227,7 @@
 			);
 			dependencies = (
 				C0ACAFC02FAAD9640062B2C2 /* PBXTargetDependency */,
+				C0C3D8332FB66C3B00B80018 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C0A3DE452FA94C2600B622CF /* OPerationsHOS */,
@@ -268,6 +307,28 @@
 			productReference = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		C0C3D8252FB66C3A00B80018 /* OPerationsHOSiMessage */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0C3D8372FB66C3B00B80018 /* Build configuration list for PBXNativeTarget "OPerationsHOSiMessage" */;
+			buildPhases = (
+				C0C3D8222FB66C3A00B80018 /* Sources */,
+				C0C3D8232FB66C3A00B80018 /* Frameworks */,
+				C0C3D8242FB66C3A00B80018 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C0C3D8292FB66C3A00B80018 /* OPerationsHOSiMessage */,
+			);
+			name = OPerationsHOSiMessage;
+			packageProductDependencies = (
+			);
+			productName = OPerationsHOSiMessage;
+			productReference = C0C3D8262FB66C3A00B80018 /* OPerationsHOSiMessage.appex */;
+			productType = "com.apple.product-type.app-extension.messages";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -292,6 +353,9 @@
 					C0ACAFAA2FAAD9630062B2C2 = {
 						CreatedOnToolsVersion = 26.4;
 					};
+					C0C3D8252FB66C3A00B80018 = {
+						CreatedOnToolsVersion = 26.4;
+					};
 				};
 			};
 			buildConfigurationList = C0A3DE3E2FA94C2600B622CF /* Build configuration list for PBXProject "OPerationsHOS" */;
@@ -312,6 +376,7 @@
 				C0A3DE532FA94C2700B622CF /* OPerationsHOSTests */,
 				C0A3DE5D2FA94C2700B622CF /* OPerationsHOSUITests */,
 				C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */,
+				C0C3D8252FB66C3A00B80018 /* OPerationsHOSiMessage */,
 			);
 		};
 /* End PBXProject section */
@@ -339,6 +404,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C0ACAFA92FAAD9630062B2C2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C3D8242FB66C3A00B80018 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -376,6 +448,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C3D8222FB66C3A00B80018 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -393,6 +472,11 @@
 			isa = PBXTargetDependency;
 			target = C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */;
 			targetProxy = C0ACAFBF2FAAD9640062B2C2 /* PBXContainerItemProxy */;
+		};
+		C0C3D8332FB66C3B00B80018 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0C3D8252FB66C3A00B80018 /* OPerationsHOSiMessage */;
+			targetProxy = C0C3D8322FB66C3B00B80018 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -774,6 +858,69 @@
 			};
 			name = Release;
 		};
+		C0C3D8352FB66C3B00B80018 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X3F6UJ44H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OPerationsHOSiMessage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OPerationsHOSiMessage;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ChatGPT.OPerationsHOS.OPerationsHOSiMessage;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C0C3D8362FB66C3B00B80018 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X3F6UJ44H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OPerationsHOSiMessage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OPerationsHOSiMessage;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ChatGPT.OPerationsHOS.OPerationsHOSiMessage;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -818,6 +965,15 @@
 			buildConfigurations = (
 				C0ACAFC32FAAD9640062B2C2 /* Debug */,
 				C0ACAFC42FAAD9640062B2C2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0C3D8372FB66C3B00B80018 /* Build configuration list for PBXNativeTarget "OPerationsHOSiMessage" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0C3D8352FB66C3B00B80018 /* Debug */,
+				C0C3D8362FB66C3B00B80018 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
