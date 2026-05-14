@@ -420,7 +420,17 @@ final class OperatorStore {
             .map { $0 }
     }
 
-    /// Inbox: orphans — unpinned, undated, and not surfaced in any typed/pinned section.
+    /// Item types that have a dedicated sidebar/tab module — surfaced by those
+    /// modules rather than by Inbox. Keep in sync with MacShellView /
+    /// IPadShellView destination defaultType mapping.
+    private static let homedTypes: Set<ItemType> = [
+        .task, .secureNote, .media, .transcription,
+        .homeSystem, .maintenance, .project, .person, .timer, .property
+    ]
+
+    /// Inbox: untriaged orphans — items the user hasn't yet pinned, scheduled,
+    /// tagged, or placed into a module. Catches anything that escapes triage so
+    /// nothing is silently lost.
     var inbox: [OperatorItem] {
         let surfaced: Set<UUID> = Set(
             homeSystems.map { $0.id }
@@ -432,6 +442,8 @@ final class OperatorStore {
             guard !item.archived else { return false }
             guard !item.pinned else { return false }
             guard item.dueDate == nil else { return false }
+            guard item.tags.isEmpty else { return false }
+            guard !Self.homedTypes.contains(item.type) else { return false }
             return !surfaced.contains(item.id)
         }
     }
