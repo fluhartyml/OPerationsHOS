@@ -55,10 +55,15 @@ struct ScheduleView: View {
 
     private var groupedByDay: [(day: Date, items: [OperatorItem])] {
         let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
         let groups = Dictionary(grouping: datedItems) { item in
             cal.startOfDay(for: item.dueDate ?? Date())
         }
-        return groups.keys.sorted().map { day in
+        let sortedDays = groups.keys.sorted()
+        // Today + future ascending (today topmost), then past descending (most recent past first).
+        let todayAndFuture = sortedDays.filter { $0 >= today }
+        let past = Array(sortedDays.filter { $0 < today }.reversed())
+        return (todayAndFuture + past).map { day in
             (day, groups[day] ?? [])
         }
     }
