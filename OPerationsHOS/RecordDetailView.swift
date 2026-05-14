@@ -17,6 +17,7 @@ struct RecordDetailView: View {
     @State private var showingEdit = false
     @State private var showingDocumentPicker = false
     @State private var showingPhotoPicker = false
+    @State private var showingDocumentScanner = false
     @State private var photoItem: PhotosPickerItem?
     @State private var quickLookURL: URL?
     @State private var aiResult: AIResult?
@@ -339,12 +340,27 @@ struct RecordDetailView: View {
                     } label: {
                         Label("File", systemImage: "doc")
                     }
+                    #if os(iOS)
+                    Button {
+                        showingDocumentScanner = true
+                    } label: {
+                        Label("Scan a Document", systemImage: "doc.viewfinder")
+                    }
+                    #endif
                 } label: {
                     Label("Add", systemImage: "plus.circle")
                         .labelStyle(.iconOnly)
                         .font(.title3)
                 }
                 .photosPicker(isPresented: $showingPhotoPicker, selection: $photoItem, matching: .images)
+                #if os(iOS)
+                .sheet(isPresented: $showingDocumentScanner) {
+                    DocumentScannerView { pages in
+                        handleScannedPages(pages, into: item)
+                    }
+                    .ignoresSafeArea()
+                }
+                #endif
             }
             if attachments.isEmpty {
                 Text("No attachments yet. Tap + to add a photo or file.")
@@ -436,6 +452,29 @@ struct RecordDetailView: View {
             }
         }
     }
+
+    #if os(iOS)
+    private func handleScannedPages(_ pages: [UIImage], into item: OperatorItem) {
+        Task {
+            for page in pages {
+                guard let data = page.jpegData(compressionQuality: 0.85) else { continue }
+                do {
+                    let info = try AttachmentStorage.write(data: data, suggestedExtension: "jpg")
+                    let attachment = Attachment(
+                        filename: info.filename,
+                        originalName: info.originalName,
+                        kind: .image
+                    )
+                    await MainActor.run {
+                        store.attach(attachment, to: item)
+                    }
+                } catch {
+                    continue
+                }
+            }
+        }
+    }
+    #endif
 
     private func timerSection(for item: OperatorItem) -> some View {
         TimerSectionView(item: item, store: store)
