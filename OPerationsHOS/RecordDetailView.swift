@@ -19,6 +19,7 @@ struct RecordDetailView: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var quickLookURL: URL?
     @State private var aiResult: AIResult?
+    @State private var showingDeleteConfirmation = false
     @Environment(\.dismiss) private var dismiss
 
     @Bindable private var ai = AIService.shared
@@ -53,24 +54,21 @@ struct RecordDetailView: View {
                     }
                 }
                 ToolbarItem(placement: .secondaryAction) {
+                    Button {
+                        store.togglePin(id: item.id)
+                    } label: {
+                        Label(item.pinned ? "Unpin" : "Pin",
+                              systemImage: item.pinned ? "pin.fill" : "pin")
+                    }
+                    .tint(item.pinned ? .red : nil)
+                }
+                ToolbarItem(placement: .secondaryAction) {
                     Menu {
-                        Button {
-                            store.togglePin(id: item.id)
-                        } label: {
-                            Label(item.pinned ? "Unpin" : "Pin",
-                                  systemImage: item.pinned ? "pin.slash" : "pin")
-                        }
                         Button {
                             store.toggleArchive(id: item.id)
                         } label: {
                             Label(item.archived ? "Unarchive" : "Archive",
                                   systemImage: "archivebox")
-                        }
-                        Button(role: .destructive) {
-                            store.delete(id: item.id)
-                            dismiss()
-                        } label: {
-                            Label("Delete", systemImage: "trash")
                         }
                     } label: {
                         Label("More", systemImage: "ellipsis.circle")
@@ -106,6 +104,7 @@ struct RecordDetailView: View {
                 aiSection(for: item)
                 attachmentsSection(for: item)
                 activityLogSection(for: item)
+                deleteSection(for: item)
             }
             .padding()
         }
@@ -560,6 +559,28 @@ struct RecordDetailView: View {
         .padding(AppTheme.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
+    }
+
+    @ViewBuilder
+    private func deleteSection(for item: OperatorItem) -> some View {
+        Button(role: .destructive) {
+            showingDeleteConfirmation = true
+        } label: {
+            Label("Delete Record?", systemImage: "trash.fill")
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.red)
+        .alert("Delete this record?", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                store.delete(id: item.id)
+                dismiss()
+            }
+        } message: {
+            Text("This cannot be undone.")
+        }
     }
 
 }

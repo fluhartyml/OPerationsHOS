@@ -17,11 +17,10 @@ struct OperatorCard: View {
                         .font(.headline)
                         .foregroundStyle(.primary)
                     Spacer()
-                    if item.pinned {
-                        Image(systemName: "pin.fill")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                    Image(systemName: item.pinned ? "pin.fill" : "pin.slash")
+                        .font(.caption)
+                        .foregroundStyle(item.pinned ? Color.red : Color.secondary)
+                        .accessibilityLabel(item.pinned ? "Pinned" : "Not pinned")
                 }
 
                 if !item.subtitle.isEmpty {
