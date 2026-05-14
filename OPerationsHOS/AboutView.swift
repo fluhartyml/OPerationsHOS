@@ -28,7 +28,7 @@ struct AboutView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    Text("Where scattered reality becomes structured and retrievable. Track warranties, appliances, projects, people, vendors, and receipts with one Human OPerating System.")
+                    Text("A personal cognitive prosthetic. Capture anything you'd otherwise forget — reminders, events, projects, people, photos, receipts, notes — and recall it later through one Human OPerating System.")
                         .font(.body)
                         .foregroundStyle(.primary)
                 }

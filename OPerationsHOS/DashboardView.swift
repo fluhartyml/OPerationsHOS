@@ -44,7 +44,7 @@ struct DashboardView: View {
         ContentUnavailableView {
             Label("No Records Yet", systemImage: "tray")
         } description: {
-            Text("Tap the plus button to create your first record. Track warranties, appliances, projects, people, vendors, and receipts.")
+            Text("OPerationsHOS is a personal cognitive prosthetic — a place to capture and recall anything you'd otherwise forget. Tap the plus button to create your first record, or open Settings to populate sample records for a tour.")
         } actions: {
             Button {
                 showingNewRecord = true
