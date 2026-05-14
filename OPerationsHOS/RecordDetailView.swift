@@ -16,6 +16,7 @@ struct RecordDetailView: View {
 
     @State private var showingEdit = false
     @State private var showingDocumentPicker = false
+    @State private var showingPhotoPicker = false
     @State private var photoItem: PhotosPickerItem?
     @State private var quickLookURL: URL?
     @State private var aiResult: AIResult?
@@ -328,8 +329,10 @@ struct RecordDetailView: View {
                 Text("Attachments").font(.headline)
                 Spacer()
                 Menu {
-                    PhotosPicker(selection: $photoItem, matching: .images) {
-                        Label("Photo", systemImage: "photo")
+                    Button {
+                        showingPhotoPicker = true
+                    } label: {
+                        Label("Photo from Library", systemImage: "photo")
                     }
                     Button {
                         showingDocumentPicker = true
@@ -341,6 +344,7 @@ struct RecordDetailView: View {
                         .labelStyle(.iconOnly)
                         .font(.title3)
                 }
+                .photosPicker(isPresented: $showingPhotoPicker, selection: $photoItem, matching: .images)
             }
             if attachments.isEmpty {
                 Text("No attachments yet. Tap + to add a photo or file.")
