@@ -16,9 +16,12 @@ enum SampleData {
     private static let id10 = UUID(uuidString: "11111111-1111-1111-1111-000000000010")!
     private static let id11 = UUID(uuidString: "11111111-1111-1111-1111-000000000011")!
     private static let id12 = UUID(uuidString: "11111111-1111-1111-1111-000000000012")!
+    private static let id13 = UUID(uuidString: "11111111-1111-1111-1111-000000000013")!
+    private static let id14 = UUID(uuidString: "11111111-1111-1111-1111-000000000014")!
+    private static let id15 = UUID(uuidString: "11111111-1111-1111-1111-000000000015")!
 
     static let sampleIDs: Set<UUID> = [
-        id1, id2, id3, id4, id5, id6, id7, id8, id9, id10, id11, id12
+        id1, id2, id3, id4, id5, id6, id7, id8, id9, id10, id11, id12, id13, id14, id15
     ]
 
     /// Exposed so OperatorStore can find the Media sample after populate
@@ -30,6 +33,8 @@ enum SampleData {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
         let inDays: (Int) -> Date = { cal.date(byAdding: .day, value: $0, to: today)! }
+        let nextSunday = cal.nextDate(after: today, matching: DateComponents(weekday: 1), matchingPolicy: .nextTime) ?? inDays(7)
+        let nextMonday = cal.nextDate(after: today, matching: DateComponents(weekday: 2), matchingPolicy: .nextTime) ?? inDays(1)
 
         return [
             // 1. Note — a quick reference jotted somewhere
@@ -157,19 +162,19 @@ enum SampleData {
                 relatedSystem: "Property"
             ),
 
-            // 9. Timer — a recurring focus block
+            // 9. Week in Summary — Sunday retrospective (backward-look)
             OperatorItem(
                 id: id9,
-                title: "Sunday Weekly Review",
-                subtitle: "Plan the week",
-                body: "Review the week, set priorities, clear inboxes, schedule deep-work blocks. Forty-five minutes each Sunday.",
-                type: .timer,
+                title: "Sunday Week in Summary",
+                subtitle: "What happened, what got done",
+                body: "End-of-week reflection. Note what you finished, what stalled, what you learned. Carry unresolved items into next week. No timer — this is reflection, not a sprint.",
+                type: .task,
                 status: .active,
                 priority: .normal,
                 createdDate: inDays(-60),
                 updatedDate: today,
-                dueDate: inDays(0),
-                tags: ["workflow", "planning"]
+                dueDate: nextSunday,
+                tags: ["workflow", "weekly", "retrospective"]
             ),
 
             // 10. Media — a photo, video, or piece of content tied to a record
@@ -214,6 +219,49 @@ enum SampleData {
                 updatedDate: inDays(-2),
                 tags: ["hvac", "contractor"],
                 relatedSystem: "HVAC"
+            ),
+
+            // 13. Plan of the Week — Monday forward-look (planning)
+            OperatorItem(
+                id: id13,
+                title: "Monday Plan of the Week",
+                subtitle: "Set priorities and schedule deep work",
+                body: "Start-of-week planning. Pick the two or three things that must move this week. Block deep-work time. Clear the inbox to zero. No timer — this is intent-setting, not a sprint.",
+                type: .task,
+                status: .active,
+                priority: .high,
+                createdDate: inDays(-60),
+                updatedDate: today,
+                dueDate: nextMonday,
+                tags: ["workflow", "weekly", "planning"]
+            ),
+
+            // 14. Pomodoro 25 / 5 — preset focus timer
+            OperatorItem(
+                id: id14,
+                title: "Pomodoro 25 / 5",
+                subtitle: "Twenty-five minutes focus + five minute break",
+                body: "Classic Pomodoro Technique cycle. Twenty-five minutes of single-task focus, five-minute break, repeat. Four cycles equals one set.",
+                type: .timer,
+                status: .open,
+                priority: .normal,
+                createdDate: inDays(-30),
+                updatedDate: inDays(-30),
+                tags: ["focus", "pomodoro", "preset"]
+            ),
+
+            // 15. Deep Work 90 — preset extended focus
+            OperatorItem(
+                id: id15,
+                title: "Deep Work 90",
+                subtitle: "Ninety-minute focus block",
+                body: "Single-task focus block matched to natural ultradian rhythm. Phone off, notifications muted. Used for hard cognitive work.",
+                type: .timer,
+                status: .open,
+                priority: .normal,
+                createdDate: inDays(-30),
+                updatedDate: inDays(-30),
+                tags: ["focus", "deep-work", "preset"]
             )
         ]
     }
