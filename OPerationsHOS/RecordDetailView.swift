@@ -22,6 +22,7 @@ struct RecordDetailView: View {
     @State private var quickLookURL: URL?
     @State private var aiResult: AIResult?
     @State private var showingDeleteConfirmation = false
+    @State private var newTagText: String = ""
     @Environment(\.dismiss) private var dismiss
 
     @Bindable private var ai = AIService.shared
@@ -100,9 +101,7 @@ struct RecordDetailView: View {
                 if !item.body.isEmpty {
                     bodySection(for: item)
                 }
-                if !item.tags.isEmpty {
-                    tagsSection(for: item)
-                }
+                tagsSection(for: item)
                 aiSection(for: item)
                 attachmentsSection(for: item)
                 activityLogSection(for: item)
@@ -298,9 +297,17 @@ struct RecordDetailView: View {
     private func bodySection(for item: OperatorItem) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Notes").font(.headline)
-            Text(item.body)
-                .font(.body)
-                .foregroundStyle(.primary)
+            TextEditor(text: Binding(
+                get: { item.body },
+                set: { newValue in
+                    item.body = newValue
+                    item.updatedDate = Date()
+                }
+            ))
+            .frame(minHeight: 80, maxHeight: 240)
+            .scrollContentBackground(.hidden)
+            .font(.body)
+            .foregroundStyle(.primary)
         }
         .padding(AppTheme.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -308,17 +315,48 @@ struct RecordDetailView: View {
     }
 
     private func tagsSection(for item: OperatorItem) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Tags").font(.headline)
-            HStack(spacing: 6) {
-                ForEach(item.tags, id: \.self) { tag in
-                    Text(tag)
-                        .font(.caption)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(item.tags, id: \.self) { tag in
+                        HStack(spacing: 4) {
+                            Text(tag).font(.caption)
+                            Button {
+                                item.tags.removeAll { $0 == tag }
+                                item.updatedDate = Date()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Remove tag \(tag)")
+                        }
                         .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 4)
                         .background(.thinMaterial, in: Capsule())
+                    }
+                    TextField("+ tag", text: $newTagText)
+                        .textFieldStyle(.plain)
+                        .font(.caption)
+                        .autocorrectionDisabled()
+                        #if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        #endif
+                        .frame(minWidth: 60)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(.thinMaterial.opacity(0.5), in: Capsule())
+                        .onSubmit {
+                            let trimmed = newTagText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !trimmed.isEmpty && !item.tags.contains(trimmed) {
+                                item.tags.append(trimmed)
+                                item.updatedDate = Date()
+                            }
+                            newTagText = ""
+                        }
                 }
-                Spacer()
             }
         }
         .padding(AppTheme.cardPadding)
