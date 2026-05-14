@@ -234,11 +234,15 @@ struct RecordDetailView: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                     .background(.thinMaterial, in: Capsule())
-                if item.pinned {
-                    Image(systemName: "pin.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                Button {
+                    store.togglePin(id: item.id)
+                } label: {
+                    Image(systemName: item.pinned ? "pin.fill" : "pin.slash")
+                        .font(.title3)
+                        .foregroundStyle(item.pinned ? Color.red : Color.secondary)
                 }
+                .buttonStyle(.plain)
+                .accessibilityLabel(item.pinned ? "Unpin" : "Pin")
                 if item.archived {
                     Image(systemName: "archivebox.fill")
                         .font(.subheadline)
