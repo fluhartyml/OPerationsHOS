@@ -564,6 +564,7 @@
 		C01C04462FB67D7900393045 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOSShare/OPerationsHOSShare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
@@ -594,6 +595,7 @@
 		C01C04472FB67D7900393045 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOSShare/OPerationsHOSShare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
