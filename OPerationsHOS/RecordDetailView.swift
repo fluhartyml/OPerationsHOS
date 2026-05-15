@@ -24,6 +24,7 @@ struct RecordDetailView: View {
     @State private var showingDeleteConfirmation = false
     @State private var newTagText: String = ""
     @State private var secureToast: ToastInfo?
+    @State private var showingLogInteraction = false
     @Environment(\.dismiss) private var dismiss
 
     @Bindable private var ai = AIService.shared
@@ -83,7 +84,24 @@ struct RecordDetailView: View {
         .sheet(isPresented: $showingEdit) {
             RecordEditSheet(mode: .edit(id), store: store)
         }
+        .sheet(isPresented: $showingLogInteraction) {
+            if let item {
+                LogInteractionSheet(person: item, store: store)
+            }
+        }
         .toast($secureToast)
+    }
+
+    private func logInteractionButton(for item: OperatorItem) -> some View {
+        Button {
+            showingLogInteraction = true
+        } label: {
+            Label("Log Interaction", systemImage: "plus.circle.fill")
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.regular)
     }
 
     @ViewBuilder
@@ -95,6 +113,9 @@ struct RecordDetailView: View {
                     contactPhoto(for: contact)
                     quickActions(for: contact)
                     contactDetails(for: contact)
+                }
+                if item.type == .person {
+                    logInteractionButton(for: item)
                 }
                 metadata(for: item)
                 if item.type == .timer {

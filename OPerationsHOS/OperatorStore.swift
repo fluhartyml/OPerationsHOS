@@ -133,6 +133,17 @@ final class OperatorStore {
         refresh()
     }
 
+    /// Log a user-initiated CRM interaction (call / message / email / meeting / note)
+    /// against a person record. Surfaces in the record's activity log alongside
+    /// system events, distinguished by isInteraction.
+    func logInteraction(kind: ActivityKind, on item: OperatorItem, summary: String) {
+        guard kind.isInteraction else { return }
+        log(kind, on: item, details: summary)
+        item.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
     func toggleArchive(id: UUID) {
         guard let target = items.first(where: { $0.id == id }) else { return }
         target.archived.toggle()
