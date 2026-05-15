@@ -17,6 +17,9 @@ final class OperatorItem {
     var archived: Bool = false
     var isSecure: Bool = false
     var tags: [String] = []
+    /// JSON-encoded `[AccessGrant]`. Storage form so SwiftData stays happy; use
+    /// the `accessGrants` computed property for typed reads/writes.
+    var accessGrantsJSON: String = "[]"
     var relatedSystem: String?
     var source: String?
 
@@ -73,6 +76,25 @@ final class OperatorItem {
         self.tags = tags
         self.relatedSystem = relatedSystem
         self.source = source
+    }
+
+    /// Typed accessor over `accessGrantsJSON`. Decodes lazily on read, encodes on write.
+    var accessGrants: [AccessGrant] {
+        get {
+            guard let data = accessGrantsJSON.data(using: .utf8),
+                  let decoded = try? JSONDecoder().decode([AccessGrant].self, from: data) else {
+                return []
+            }
+            return decoded
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue),
+               let str = String(data: data, encoding: .utf8) {
+                accessGrantsJSON = str
+            } else {
+                accessGrantsJSON = "[]"
+            }
+        }
     }
 }
 

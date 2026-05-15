@@ -25,6 +25,7 @@ struct RecordDetailView: View {
     @State private var newTagText: String = ""
     @State private var secureToast: ToastInfo?
     @State private var showingLogInteraction = false
+    @State private var showingShareAccessSheet = false
     @Environment(\.dismiss) private var dismiss
 
     @Bindable private var ai = AIService.shared
@@ -89,6 +90,11 @@ struct RecordDetailView: View {
                 LogInteractionSheet(person: item, store: store)
             }
         }
+        .sheet(isPresented: $showingShareAccessSheet) {
+            if let item {
+                ShareAccessSheet(record: item, store: store)
+            }
+        }
         .toast($secureToast)
     }
 
@@ -104,6 +110,143 @@ struct RecordDetailView: View {
         .controlSize(.regular)
     }
 
+    // MARK: - Sharing (per-record)
+
+    private func sharedWithSection(for item: OperatorItem) -> some View {
+        let grants = item.accessGrants
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label("Shared With", systemImage: "person.2")
+                    .font(.headline)
+                Spacer()
+                Button {
+                    showingShareAccessSheet = true
+                } label: {
+                    Label("Add", systemImage: "plus")
+                        .labelStyle(.iconOnly)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+            }
+
+            if grants.isEmpty {
+                Text("Not shared with anyone. Tap the + button to grant a person access.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(grants) { grant in
+                    sharedWithRow(grant: grant, recordID: item.id)
+                }
+            }
+        }
+        .padding(AppTheme.cardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
+    }
+
+    private func sharedWithRow(grant: AccessGrant, recordID: UUID) -> some View {
+        let personName = store.item(id: grant.personID)?.title ?? "Unknown person"
+        return HStack(spacing: 10) {
+            Image(systemName: "person.crop.circle")
+                .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(personName).font(.subheadline)
+                HStack(spacing: 4) {
+                    Image(systemName: grant.permission.symbol)
+                        .font(.caption2)
+                    Text(grant.permission.label)
+                        .font(.caption)
+                }
+                .foregroundStyle(.secondary)
+            }
+            Spacer()
+            Menu {
+                ForEach(AccessPermission.allCases) { level in
+                    Button {
+                        store.grantAccess(to: recordID, person: grant.personID, permission: level)
+                    } label: {
+                        Label(level.label, systemImage: level.symbol)
+                    }
+                }
+                Divider()
+                Button(role: .destructive) {
+                    store.revokeAccess(to: recordID, person: grant.personID)
+                } label: {
+                    Label("Revoke", systemImage: "minus.circle")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+                    .foregroundStyle(.tint)
+            }
+        }
+    }
+
+    // MARK: - Sharing (per-Person view)
+
+    private func recordsSharedWithPersonSection(for person: OperatorItem) -> some View {
+        let shared = store.recordsShared(with: person.id)
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label("Records Shared With \(person.title)", systemImage: "tray.full")
+                    .font(.headline)
+                    .lineLimit(1)
+                Spacer()
+                if !shared.isEmpty {
+                    Button(role: .destructive) {
+                        store.revokeAllAccess(person: person.id)
+                    } label: {
+                        Label("Revoke All", systemImage: "minus.circle")
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+            }
+
+            if shared.isEmpty {
+                Text("No records currently shared with this person. Open any record and tap Shared With → Add to grant access.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(shared) { record in
+                    recordSharedWithPersonRow(record: record, personID: person.id)
+                }
+            }
+        }
+        .padding(AppTheme.cardPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
+    }
+
+    private func recordSharedWithPersonRow(record: OperatorItem, personID: UUID) -> some View {
+        let grant = record.accessGrants.first(where: { $0.personID == personID })
+        return NavigationLink(value: record.id) {
+            HStack(spacing: 10) {
+                Image(systemName: record.type.symbol)
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(record.title).font(.subheadline)
+                    if let grant {
+                        HStack(spacing: 4) {
+                            Image(systemName: grant.permission.symbol)
+                                .font(.caption2)
+                            Text(grant.permission.label)
+                                .font(.caption)
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                Button(role: .destructive) {
+                    store.revokeAccess(to: record.id, person: personID)
+                } label: {
+                    Image(systemName: "minus.circle")
+                }
+                .buttonStyle(.borderless)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
     @ViewBuilder
     private func content(for item: OperatorItem) -> some View {
         ScrollView {
@@ -116,6 +259,7 @@ struct RecordDetailView: View {
                 }
                 if item.type == .person {
                     logInteractionButton(for: item)
+                    recordsSharedWithPersonSection(for: item)
                 }
                 metadata(for: item)
                 if item.type == .timer {
@@ -125,6 +269,9 @@ struct RecordDetailView: View {
                     bodySection(for: item)
                 }
                 tagsSection(for: item)
+                if item.type != .person {
+                    sharedWithSection(for: item)
+                }
                 aiSection(for: item)
                 attachmentsSection(for: item)
                 activityLogSection(for: item)

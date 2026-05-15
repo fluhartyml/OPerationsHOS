@@ -144,6 +144,57 @@ final class OperatorStore {
         refresh()
     }
 
+    // MARK: - Access grants (record sharing)
+
+    /// Grant access to a record. If a grant for the same person already exists,
+    /// updates the permission level. Otherwise inserts a new grant.
+    func grantAccess(to recordID: UUID, person personID: UUID, permission: AccessPermission) {
+        guard let target = items.first(where: { $0.id == recordID }) else { return }
+        var grants = target.accessGrants
+        if let idx = grants.firstIndex(where: { $0.personID == personID }) {
+            grants[idx].permission = permission
+        } else {
+            grants.append(AccessGrant(personID: personID, permission: permission))
+        }
+        target.accessGrants = grants
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
+    /// Revoke a specific person's access to a single record.
+    func revokeAccess(to recordID: UUID, person personID: UUID) {
+        guard let target = items.first(where: { $0.id == recordID }) else { return }
+        var grants = target.accessGrants
+        grants.removeAll { $0.personID == personID }
+        target.accessGrants = grants
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
+    /// Wholesale revoke — remove the person from every record's access list.
+    /// Used from the per-Person detail view when the owner wants to fully
+    /// uninvite someone from all shared content.
+    func revokeAllAccess(person personID: UUID) {
+        for item in items where item.accessGrants.contains(where: { $0.personID == personID }) {
+            var grants = item.accessGrants
+            grants.removeAll { $0.personID == personID }
+            item.accessGrants = grants
+            item.updatedDate = Date()
+        }
+        try? modelContext.save()
+        refresh()
+    }
+
+    /// All records the given person currently has access to.
+    func recordsShared(with personID: UUID) -> [OperatorItem] {
+        items.filter { item in
+            item.accessGrants.contains(where: { $0.personID == personID })
+        }
+        .sorted { $0.updatedDate > $1.updatedDate }
+    }
+
     func toggleArchive(id: UUID) {
         guard let target = items.first(where: { $0.id == id }) else { return }
         target.archived.toggle()
