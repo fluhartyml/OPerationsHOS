@@ -1,9 +1,18 @@
 import SwiftUI
 
 /// One-time welcome sheet shown on the first launch after install. After the user
-/// completes either path (Take a tour / Start fresh), the `hasShownWelcome` flag
-/// is set in UserDefaults so this never re-fires. Permissions stay just-in-time
-/// per iOS convention — no permission gauntlet here.
+/// completes either path (Populate Samples / Start Fresh), the `hasShownWelcome`
+/// flag is set in UserDefaults so this never re-fires. Permissions stay
+/// just-in-time per iOS convention — no permission gauntlet here.
+///
+/// Future-work note (Michael 2026-05-15): a proper interactive "Take a Tour"
+/// experience should ship as a separate feature. Animated callouts per gesture
+/// (tab bar → Dashboard → Pin/Vault toggles → Vault sentry challenge → Share
+/// action → record detail flow), with temporary sample records seeded at tour
+/// start and auto-removed at tour completion. User records created during the
+/// tour stay. The current "Populate Samples" button is sample-data only — not
+/// a real tour. Replacing the button label with the honest description until
+/// the proper tour ships.
 struct OnboardingSheet: View {
     let onTour: () -> Void
     let onStart: () -> Void
@@ -32,13 +41,13 @@ struct OnboardingSheet: View {
                 Button {
                     onTour()
                 } label: {
-                    Text("Take a Tour")
+                    Text("Populate Samples")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
 
-                Text("Populates a small set of sample records so you can see how the app works. Sample records are easy to delete or replace later.")
+                Text("Adds a small set of sample records — appliances, people, projects, and a couple of preset timers — so the modules are populated to explore. Easy to delete or replace later from Settings.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
