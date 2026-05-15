@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 import LocalAuthentication
 
 struct VaultView: View {
@@ -9,12 +8,7 @@ struct VaultView: View {
     @State private var unlocked: Bool = false
     @State private var authError: String?
     @State private var authenticating: Bool = false
-    @State private var lastActivity: Date?
-    @State private var tick: Date = Date()
     @Environment(\.scenePhase) private var scenePhase
-
-    private let unlockTTL: TimeInterval = 30
-    private let ttlTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         Group {
@@ -33,7 +27,6 @@ struct VaultView: View {
                 ToolbarItem(placement: .secondaryAction) {
                     Button {
                         unlocked = false
-                        lastActivity = nil
                     } label: {
                         Label("Lock", systemImage: "lock.fill")
                     }
@@ -42,26 +35,16 @@ struct VaultView: View {
         }
         .onAppear {
             // Auto-trigger biometric on tab appearance if still locked.
-            // TTL check in onReceive may have flipped unlocked=false while away;
-            // re-prompt in that case. If still within TTL, coming back to root counts
-            // as activity (extends the window).
             if !unlocked && !authenticating {
                 authenticate()
-            } else if unlocked {
-                lastActivity = Date()
-            }
-        }
-        .onReceive(ttlTimer) { now in
-            tick = now
-            if unlocked, let last = lastActivity, now.timeIntervalSince(last) > unlockTTL {
-                unlocked = false
-                lastActivity = nil
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
+            // Sentry challenges entry, not stay. Vault relocks only when the scene
+            // backgrounds (app switcher, home swipe, device auto-lock / screen blank).
+            // While Vault is open and the app is foregrounded, no further challenges.
             if newPhase == .background || newPhase == .inactive {
                 unlocked = false
-                lastActivity = nil
             }
         }
     }
@@ -107,7 +90,6 @@ struct VaultView: View {
                 authenticating = false
                 if success {
                     unlocked = true
-                    lastActivity = Date()
                     authError = nil
                 } else {
                     authError = evalError?.localizedDescription ?? "Authentication failed."
@@ -126,23 +108,20 @@ struct VaultView: View {
         List {
             Section {
                 NavigationLink {
-                    VaultSubsectionView(store: store, type: .media, showingNewRecord: $showingNewRecord, lastActivity: $lastActivity)
+                    VaultSubsectionView(store: store, type: .media, showingNewRecord: $showingNewRecord)
                 } label: {
                     disclosureRow(label: "Media", symbol: "photo", count: count(of: .media))
                 }
-                .simultaneousGesture(TapGesture().onEnded { lastActivity = Date() })
                 NavigationLink {
-                    VaultSubsectionView(store: store, type: .transcription, showingNewRecord: $showingNewRecord, lastActivity: $lastActivity)
+                    VaultSubsectionView(store: store, type: .transcription, showingNewRecord: $showingNewRecord)
                 } label: {
                     disclosureRow(label: "Transcription", symbol: "waveform", count: count(of: .transcription))
                 }
-                .simultaneousGesture(TapGesture().onEnded { lastActivity = Date() })
                 NavigationLink {
-                    VaultSubsectionView(store: store, type: .secureNote, showingNewRecord: $showingNewRecord, lastActivity: $lastActivity)
+                    VaultSubsectionView(store: store, type: .secureNote, showingNewRecord: $showingNewRecord)
                 } label: {
                     disclosureRow(label: "Secure Notes", symbol: "lock.doc", count: count(of: .secureNote))
                 }
-                .simultaneousGesture(TapGesture().onEnded { lastActivity = Date() })
             } header: {
                 Text("Private")
             } footer: {
@@ -176,7 +155,6 @@ struct VaultSubsectionView: View {
     let store: OperatorStore
     let type: ItemType
     @Binding var showingNewRecord: Bool
-    @Binding var lastActivity: Date?
 
     private var items: [OperatorItem] {
         store.items
@@ -203,10 +181,6 @@ struct VaultSubsectionView: View {
                 }
             }
         }
-        .onAppear {
-            // Entering a vault sub-section counts as activity — extends the TTL.
-            lastActivity = Date()
-        }
     }
 
     private var list: some View {
@@ -217,7 +191,6 @@ struct VaultSubsectionView: View {
                         OperatorCard(item: item)
                     }
                     .buttonStyle(.plain)
-                    .simultaneousGesture(TapGesture().onEnded { lastActivity = Date() })
                     .contextMenu {
                         Button {
                             store.toggleArchive(id: item.id)
