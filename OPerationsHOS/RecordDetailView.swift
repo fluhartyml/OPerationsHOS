@@ -69,6 +69,11 @@ struct RecordDetailView: View {
                     .tint(item.pinned ? .red : nil)
                 }
                 ToolbarItem(placement: .secondaryAction) {
+                    ShareLink(item: shareText(for: item), preview: SharePreview(item.title)) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                }
+                ToolbarItem(placement: .secondaryAction) {
                     Menu {
                         Button {
                             store.toggleArchive(id: item.id)
@@ -108,6 +113,23 @@ struct RecordDetailView: View {
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.regular)
+    }
+
+    /// Plain-text representation of a record for the iOS share sheet.
+    /// Recipients can read this in iMessage / email / etc.; tapping the deep
+    /// link opens the record in their HOS install (deep-link routing — Phase 3+).
+    private func shareText(for item: OperatorItem) -> String {
+        var parts: [String] = ["\(item.title)"]
+        if !item.subtitle.isEmpty { parts.append(item.subtitle) }
+        parts.append("Type: \(item.type.label)")
+        parts.append("Status: \(item.status.label)")
+        if let due = item.dueDate {
+            parts.append("Due: \(due.formatted(date: .abbreviated, time: .omitted))")
+        }
+        if !item.body.isEmpty { parts.append("\n\(item.body)") }
+        if !item.tags.isEmpty { parts.append("Tags: " + item.tags.joined(separator: ", ")) }
+        parts.append("\nShared from OPerationsHOS · operationshos://record/\(item.id.uuidString)")
+        return parts.joined(separator: "\n")
     }
 
     // MARK: - Sharing (per-record)
