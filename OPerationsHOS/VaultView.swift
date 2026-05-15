@@ -192,26 +192,47 @@ struct VaultSubsectionView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: AppTheme.cardSpacing) {
                 ForEach(items) { item in
-                    NavigationLink(value: item.id) {
-                        OperatorCard(item: item)
-                    }
-                    .buttonStyle(.plain)
-                    .contextMenu {
-                        Button {
-                            store.toggleArchive(id: item.id)
-                        } label: {
-                            Label(item.archived ? "Unarchive" : "Archive",
-                                  systemImage: "archivebox")
-                        }
-                        Button(role: .destructive) {
-                            store.delete(id: item.id)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
+                    row(for: item)
                 }
             }
             .padding()
+        }
+    }
+
+    /// Media-typed records inside Vault > Media route to MediaDetailView
+    /// (image-first), not the universal RecordDetailView. Everything else
+    /// uses the value-based UUID routing that surfaces RecordDetailView.
+    @ViewBuilder
+    private func row(for item: OperatorItem) -> some View {
+        if type == .media {
+            NavigationLink {
+                MediaDetailView(id: item.id, store: store)
+            } label: {
+                OperatorCard(item: item)
+            }
+            .buttonStyle(.plain)
+            .contextMenu { rowContextMenu(for: item) }
+        } else {
+            NavigationLink(value: item.id) {
+                OperatorCard(item: item)
+            }
+            .buttonStyle(.plain)
+            .contextMenu { rowContextMenu(for: item) }
+        }
+    }
+
+    @ViewBuilder
+    private func rowContextMenu(for item: OperatorItem) -> some View {
+        Button {
+            store.toggleArchive(id: item.id)
+        } label: {
+            Label(item.archived ? "Unarchive" : "Archive",
+                  systemImage: "archivebox")
+        }
+        Button(role: .destructive) {
+            store.delete(id: item.id)
+        } label: {
+            Label("Delete", systemImage: "trash")
         }
     }
 
