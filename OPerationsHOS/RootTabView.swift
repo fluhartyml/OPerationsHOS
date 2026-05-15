@@ -1,21 +1,23 @@
 import SwiftUI
 
+/// iPhone (compact size class) tab bar.
+/// Four explicit tabs — Dashboard, Inbox, Time (compound), People — chosen for the
+/// cognitive-prosthetic frame: aggregate / capture / time / relationships. Everything
+/// else (Vault, Systems, Maintenance, Projects, Property, Search, Settings) falls into
+/// the iOS auto-generated More overflow. Schedule, Reminders, and Timers no longer
+/// appear as standalone tabs — they live inside the Time compound view.
+/// Mac and iPad sidebars (MacShellView, IPadShellView) keep all rows visible.
 struct RootTabView: View {
     let store: OperatorStore
 
     @State private var dashboardSheet = false
     @State private var inboxSheet = false
-    @State private var scheduleSheet = false
-    @State private var remindersSheet = false
+    @State private var peopleSheet = false
     @State private var vaultSheet = false
     @State private var systemsSheet = false
     @State private var maintenanceSheet = false
     @State private var projectsSheet = false
-    @State private var peopleSheet = false
-    @State private var timersSheet = false
-    @State private var mediaSheet = false
     @State private var propertySheet = false
-    @State private var settingsSheet = false
 
     var body: some View {
         TabView {
@@ -27,12 +29,24 @@ struct RootTabView: View {
                 InboxView(store: store, showingNewRecord: $inboxSheet)
             }
 
-            tab("Schedule", "calendar", sheet: $scheduleSheet, defaultType: nil) {
-                ScheduleView(store: store, showingNewRecord: $scheduleSheet)
+            NavigationStack {
+                TimeView(store: store)
+                    .navigationDestination(for: UUID.self) { id in
+                        RecordDetailView(id: id, store: store)
+                    }
+            }
+            .tabItem {
+                Label("Time", systemImage: "clock")
             }
 
-            tab("Reminders", "checklist", sheet: $remindersSheet, defaultType: .task) {
-                RemindersView(store: store, showingNewRecord: $remindersSheet)
+            tab("People", "person.2", sheet: $peopleSheet, defaultType: .person) {
+                ModuleView(
+                    title: "People",
+                    symbol: "person.2",
+                    scope: .types([.person]),
+                    store: store,
+                    showingNewRecord: $peopleSheet
+                )
             }
 
             tab("Vault", "lock.shield", sheet: $vaultSheet, defaultType: .secureNote) {
@@ -66,26 +80,6 @@ struct RootTabView: View {
                     scope: .types([.project]),
                     store: store,
                     showingNewRecord: $projectsSheet
-                )
-            }
-
-            tab("People", "person.crop.circle", sheet: $peopleSheet, defaultType: .person) {
-                ModuleView(
-                    title: "People",
-                    symbol: "person.crop.circle",
-                    scope: .types([.person]),
-                    store: store,
-                    showingNewRecord: $peopleSheet
-                )
-            }
-
-            tab("Timers", "timer", sheet: $timersSheet, defaultType: .timer) {
-                ModuleView(
-                    title: "Timers",
-                    symbol: "timer",
-                    scope: .types([.timer]),
-                    store: store,
-                    showingNewRecord: $timersSheet
                 )
             }
 
