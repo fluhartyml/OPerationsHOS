@@ -3,10 +3,21 @@ import SwiftUI
 struct DashboardView: View {
     let store: OperatorStore
     @Binding var showingNewRecord: Bool
+    @State private var searchQuery: String = ""
+
+    private var isSearching: Bool {
+        !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var searchResults: [OperatorItem] {
+        store.search(searchQuery)
+    }
 
     var body: some View {
         Group {
-            if store.items.isEmpty {
+            if isSearching {
+                searchResultsView
+            } else if store.items.isEmpty {
                 emptyState
             } else {
                 populatedDashboard
@@ -15,6 +26,9 @@ struct DashboardView: View {
         .navigationTitle("OPerationsHOS")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        .searchable(text: $searchQuery, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "Search records")
+        #else
+        .searchable(text: $searchQuery, prompt: "Search records")
         #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -22,6 +36,27 @@ struct DashboardView: View {
                     Label("New Record", systemImage: "plus")
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var searchResultsView: some View {
+        if searchResults.isEmpty {
+            ContentUnavailableView(
+                "No matches",
+                systemImage: "magnifyingglass",
+                description: Text("Nothing matched \u{201C}\(searchQuery)\u{201D}. Vault records are excluded from global search; open Vault to search private content.")
+            )
+        } else {
+            List(searchResults, id: \.id) { item in
+                NavigationLink(value: item.id) {
+                    OperatorCard(item: item)
+                }
+                .buttonStyle(.plain)
+            }
+            #if os(iOS)
+            .listStyle(.insetGrouped)
+            #endif
         }
     }
 

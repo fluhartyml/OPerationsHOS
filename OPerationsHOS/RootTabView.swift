@@ -94,16 +94,6 @@ struct RootTabView: View {
             }
 
             NavigationStack {
-                SearchView(store: store)
-                    .navigationDestination(for: UUID.self) { id in
-                        RecordDetailView(id: id, store: store)
-                    }
-            }
-            .tabItem {
-                Label("Search", systemImage: "magnifyingglass")
-            }
-
-            NavigationStack {
                 SettingsView(store: store)
             }
             .tabItem {

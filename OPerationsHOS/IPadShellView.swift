@@ -5,7 +5,7 @@ private enum TabKind: Hashable, CaseIterable, Identifiable {
     case dashboard, inbox, schedule, reminders
     case systems, maintenance, projects, people, timers, property
     case vault
-    case search, settings
+    case settings
 
     var id: Self { self }
 
@@ -22,7 +22,6 @@ private enum TabKind: Hashable, CaseIterable, Identifiable {
         case .timers:      return "Timers"
         case .property:    return "Property"
         case .vault:       return "Vault"
-        case .search:      return "Search"
         case .settings:    return "Settings"
         }
     }
@@ -40,14 +39,13 @@ private enum TabKind: Hashable, CaseIterable, Identifiable {
         case .timers:      return "timer"
         case .property:    return "building.2"
         case .vault:       return "lock.shield"
-        case .search:      return "magnifyingglass"
         case .settings:    return "gearshape"
         }
     }
 
     var defaultType: ItemType? {
         switch self {
-        case .dashboard, .inbox, .schedule, .search, .settings: return nil
+        case .dashboard, .inbox, .schedule, .settings: return nil
         case .reminders:   return .task
         case .vault:       return .secureNote
         case .systems:     return .homeSystem
@@ -87,7 +85,6 @@ struct IPadShellView: View {
 
     private var sidebar: some View {
         List(selection: $selectedTab) {
-            Section { rows([.search]) }
             Section("Meta") {
                 rows([.dashboard, .settings, .vault])
             }
@@ -205,8 +202,6 @@ struct IPadShellView: View {
             )
         case .vault:
             VaultView(store: store, showingNewRecord: $newRecordSheet)
-        case .search:
-            SearchView(store: store)
         case .settings:
             SettingsView(store: store)
         }
