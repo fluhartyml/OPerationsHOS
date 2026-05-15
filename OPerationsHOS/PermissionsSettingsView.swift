@@ -21,9 +21,21 @@ struct PermissionsSettingsView: View {
     @State private var calendarStatus: EKAuthorizationStatus = EKEventStore.authorizationStatus(for: .event)
     @State private var contactsStatus: CNAuthorizationStatus = CNContactStore.authorizationStatus(for: .contacts)
     @State private var lastContactImportCount: Int = 0
+    @Environment(\.scenePhase) private var scenePhase
 
     private let eventStore = EKEventStore()
     private let contactStore = CNContactStore()
+
+    /// Re-fetches every iOS permission status. Runs on view appear and on
+    /// scenePhase return-to-active so the UI reflects external changes (user
+    /// revokes a permission in Settings.app, or the system-level prompt's
+    /// completion callback races the view's state assignment).
+    private func refreshAllStatuses() {
+        cameraStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        remindersStatus = EKEventStore.authorizationStatus(for: .reminder)
+        calendarStatus = EKEventStore.authorizationStatus(for: .event)
+        contactsStatus = CNContactStore.authorizationStatus(for: .contacts)
+    }
 
     var body: some View {
         Section {
@@ -79,6 +91,10 @@ struct PermissionsSettingsView: View {
             Text("Privacy & Security Permissions")
         } footer: {
             Text("Grant in advance so the camera scanner, EventKit sync, and Contacts integration work without interruption later. Granting Contacts also imports the contacts you allow as Person records in People CRM. Denied permissions can be changed from Settings \u{203A} OPerationsHOS in the iOS Settings app.")
+        }
+        .onAppear { refreshAllStatuses() }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active { refreshAllStatuses() }
         }
     }
 
