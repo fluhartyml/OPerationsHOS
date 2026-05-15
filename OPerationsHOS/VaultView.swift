@@ -244,6 +244,7 @@ struct VaultSubsectionView: View {
 
 struct VaultSecureRecordsView: View {
     let store: OperatorStore
+    @State private var secureToast: ToastInfo?
 
     private var items: [OperatorItem] {
         store.secureRecords
@@ -261,6 +262,7 @@ struct VaultSecureRecordsView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        .toast($secureToast)
     }
 
     private var list: some View {
@@ -273,7 +275,12 @@ struct VaultSecureRecordsView: View {
                     .buttonStyle(.plain)
                     .contextMenu {
                         Button {
-                            store.toggleSecure(id: item.id)
+                            let id = item.id
+                            store.toggleSecure(id: id)
+                            secureToast = ToastInfo(
+                                message: "Removed from Vault",
+                                undoAction: { store.toggleSecure(id: id) }
+                            )
                         } label: {
                             Label("Remove from Vault", systemImage: "lock.shield")
                         }

@@ -23,6 +23,7 @@ struct RecordDetailView: View {
     @State private var aiResult: AIResult?
     @State private var showingDeleteConfirmation = false
     @State private var newTagText: String = ""
+    @State private var secureToast: ToastInfo?
     @Environment(\.dismiss) private var dismiss
 
     @Bindable private var ai = AIService.shared
@@ -82,6 +83,7 @@ struct RecordDetailView: View {
         .sheet(isPresented: $showingEdit) {
             RecordEditSheet(mode: .edit(id), store: store)
         }
+        .toast($secureToast)
     }
 
     @ViewBuilder
@@ -243,7 +245,13 @@ struct RecordDetailView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(item.pinned ? "Unpin" : "Pin")
                 Button {
-                    store.toggleSecure(id: item.id)
+                    let wasSecure = item.isSecure
+                    let id = item.id
+                    store.toggleSecure(id: id)
+                    secureToast = ToastInfo(
+                        message: wasSecure ? "Removed from Vault" : "Moved to Vault > Secure Records",
+                        undoAction: { store.toggleSecure(id: id) }
+                    )
                 } label: {
                     Image(systemName: item.isSecure ? "lock.shield.fill" : "lock.shield")
                         .font(.title3)
