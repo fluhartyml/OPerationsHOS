@@ -122,6 +122,11 @@ struct VaultView: View {
                 } label: {
                     disclosureRow(label: "Secure Notes", symbol: "lock.doc", count: count(of: .secureNote))
                 }
+                NavigationLink {
+                    VaultSecureRecordsView(store: store)
+                } label: {
+                    disclosureRow(label: "Secure Records", symbol: "lock.shield", count: store.secureRecords.count)
+                }
             } header: {
                 Text("Private")
             } footer: {
@@ -231,6 +236,70 @@ struct VaultSubsectionView: View {
         case .transcription: return "Voice memos transcribed and kept inside the Vault. Tap the plus button to record."
         case .secureNote: return "Notes that should stay behind biometric authentication. Tap the plus button to add one."
         default: return "Records of this type appear here."
+        }
+    }
+}
+
+// MARK: - Secure Records sub-section (filter: isSecure == true, regardless of type)
+
+struct VaultSecureRecordsView: View {
+    let store: OperatorStore
+
+    private var items: [OperatorItem] {
+        store.secureRecords
+    }
+
+    var body: some View {
+        Group {
+            if items.isEmpty {
+                empty
+            } else {
+                list
+            }
+        }
+        .navigationTitle("Secure Records")
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
+    }
+
+    private var list: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: AppTheme.cardSpacing) {
+                ForEach(items) { item in
+                    NavigationLink(value: item.id) {
+                        OperatorCard(item: item)
+                    }
+                    .buttonStyle(.plain)
+                    .contextMenu {
+                        Button {
+                            store.toggleSecure(id: item.id)
+                        } label: {
+                            Label("Remove from Vault", systemImage: "lock.shield")
+                        }
+                        Button {
+                            store.toggleArchive(id: item.id)
+                        } label: {
+                            Label(item.archived ? "Unarchive" : "Archive",
+                                  systemImage: "archivebox")
+                        }
+                        Button(role: .destructive) {
+                            store.delete(id: item.id)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+                }
+            }
+            .padding()
+        }
+    }
+
+    private var empty: some View {
+        ContentUnavailableView {
+            Label("No secure records yet", systemImage: "lock.shield")
+        } description: {
+            Text("Records you flag as secure from any module land here. Open any record's detail view and tap the vault icon to move it in.")
         }
     }
 }

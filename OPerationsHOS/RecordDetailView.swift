@@ -242,6 +242,15 @@ struct RecordDetailView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(item.pinned ? "Unpin" : "Pin")
+                Button {
+                    store.toggleSecure(id: item.id)
+                } label: {
+                    Image(systemName: item.isSecure ? "lock.shield.fill" : "lock.shield")
+                        .font(.title3)
+                        .foregroundStyle(item.isSecure ? Color.blue : Color.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(item.isSecure ? "Remove from Vault" : "Move to Vault")
                 if item.archived {
                     Image(systemName: "archivebox.fill")
                         .font(.subheadline)

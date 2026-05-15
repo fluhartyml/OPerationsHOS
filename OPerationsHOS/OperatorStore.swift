@@ -125,6 +125,14 @@ final class OperatorStore {
         refresh()
     }
 
+    func toggleSecure(id: UUID) {
+        guard let target = items.first(where: { $0.id == id }) else { return }
+        target.isSecure.toggle()
+        target.updatedDate = Date()
+        try? modelContext.save()
+        refresh()
+    }
+
     func toggleArchive(id: UUID) {
         guard let target = items.first(where: { $0.id == id }) else { return }
         target.archived.toggle()
@@ -302,7 +310,14 @@ final class OperatorStore {
     }
 
     func runningTimers() -> [OperatorItem] {
-        items.filter { $0.type == .timer && $0.runningSince != nil && !$0.archived }
+        items.filter { $0.type == .timer && $0.runningSince != nil && !$0.archived && !$0.isSecure }
+    }
+
+    /// Records the user has flagged as secure — only visible inside Vault > Secure Records.
+    /// Hidden from every native module and from global search.
+    var secureRecords: [OperatorItem] {
+        items.filter { !$0.archived && $0.isSecure }
+            .sorted { $0.updatedDate > $1.updatedDate }
     }
 
     // MARK: - Search
@@ -315,6 +330,7 @@ final class OperatorStore {
         let q = trimmed.lowercased()
         return items.filter { item in
             guard !item.archived else { return false }
+            guard !item.isSecure else { return false }
             guard !item.type.isVaultOnly else { return false }
             if item.title.lowercased().contains(q) { return true }
             if item.subtitle.lowercased().contains(q) { return true }
@@ -338,7 +354,7 @@ final class OperatorStore {
     private static let typedSectionTypes: Set<ItemType> = [.appliance, .homeSystem, .person, .project]
 
     private func typedSection(of types: Set<ItemType>) -> [OperatorItem] {
-        let inScope = items.filter { !$0.archived && types.contains($0.type) }
+        let inScope = items.filter { !$0.archived && !$0.isSecure && types.contains($0.type) }
         let pinned = inScope.filter { $0.pinned }
         return pinned.count < 2 ? inScope : pinned
     }
@@ -347,6 +363,7 @@ final class OperatorStore {
         let cal = Calendar.current
         return items.filter { item in
             guard !item.archived else { return false }
+            guard !item.isSecure else { return false }
             guard let due = item.dueDate else { return false }
             return cal.isDateInToday(due) || due < Date()
         }
@@ -357,6 +374,7 @@ final class OperatorStore {
         let cal = Calendar.current
         return items.filter { item in
             guard !item.archived else { return false }
+            guard !item.isSecure else { return false }
             guard let due = item.dueDate else { return false }
             return cal.isDateInToday(due)
         }
@@ -368,6 +386,7 @@ final class OperatorStore {
         let cal = Calendar.current
         return items.filter { item in
             guard !item.archived else { return false }
+            guard !item.isSecure else { return false }
             guard item.status != .complete else { return false }
             guard let due = item.dueDate else { return false }
             return due < Date() && !cal.isDateInToday(due)
@@ -377,14 +396,14 @@ final class OperatorStore {
 
     /// Records with status == .waiting (regardless of date).
     var waiting: [OperatorItem] {
-        items.filter { !$0.archived && $0.status == .waiting }
+        items.filter { !$0.archived && !$0.isSecure && $0.status == .waiting }
             .sorted { $0.updatedDate > $1.updatedDate }
     }
 
     /// Top-level Pinned section: pinned records whose type doesn't have its own typed section.
     var topLevelPinned: [OperatorItem] {
         items.filter {
-            $0.pinned && !$0.archived && !Self.typedSectionTypes.contains($0.type)
+            $0.pinned && !$0.archived && !$0.isSecure && !Self.typedSectionTypes.contains($0.type)
         }
     }
 
@@ -404,7 +423,7 @@ final class OperatorStore {
         let now = Date()
         let cal = Calendar.current
         return items
-            .filter { !$0.archived }
+            .filter { !$0.archived && !$0.isSecure }
             .filter { item in
                 guard let due = item.dueDate else { return false }
                 return due > now && !cal.isDateInToday(due)
@@ -414,7 +433,7 @@ final class OperatorStore {
 
     var recentlyUpdated: [OperatorItem] {
         items
-            .filter { !$0.archived }
+            .filter { !$0.archived && !$0.isSecure }
             .sorted { $0.updatedDate > $1.updatedDate }
             .prefix(5)
             .map { $0 }
@@ -440,6 +459,7 @@ final class OperatorStore {
         )
         return items.filter { item in
             guard !item.archived else { return false }
+            guard !item.isSecure else { return false }
             guard !item.pinned else { return false }
             guard item.dueDate == nil else { return false }
             guard item.tags.isEmpty else { return false }

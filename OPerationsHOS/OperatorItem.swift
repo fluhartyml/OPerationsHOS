@@ -15,6 +15,7 @@ final class OperatorItem {
     var dueDate: Date?
     var pinned: Bool = false
     var archived: Bool = false
+    var isSecure: Bool = false
     var tags: [String] = []
     var relatedSystem: String?
     var source: String?
@@ -51,6 +52,7 @@ final class OperatorItem {
         dueDate: Date? = nil,
         pinned: Bool = false,
         archived: Bool = false,
+        isSecure: Bool = false,
         tags: [String] = [],
         relatedSystem: String? = nil,
         source: String? = nil
@@ -67,6 +69,7 @@ final class OperatorItem {
         self.dueDate = dueDate
         self.pinned = pinned
         self.archived = archived
+        self.isSecure = isSecure
         self.tags = tags
         self.relatedSystem = relatedSystem
         self.source = source
