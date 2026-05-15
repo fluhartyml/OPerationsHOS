@@ -23,6 +23,7 @@ private struct AppShellInner: View {
     var body: some View {
         platformShell
             .onAppear {
+                PendingShareConsumer.consume(into: store)
                 if !hasShownWelcome {
                     showingOnboarding = true
                 }
