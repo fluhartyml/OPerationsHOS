@@ -94,23 +94,54 @@ private struct ZoomableImageContainer: View {
     let image: PlatformImage
     let title: String
 
+    @State private var currentScale: CGFloat = 1.0
+    @State private var liveScale: CGFloat = 1.0
+
+    private let minScale: CGFloat = 0.5
+    private let maxScale: CGFloat = 6.0
+
+    private var effectiveScale: CGFloat {
+        max(minScale, min(maxScale, currentScale * liveScale))
+    }
+
     var body: some View {
         ScrollView([.horizontal, .vertical]) {
-            #if canImport(UIKit)
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .accessibilityLabel(title)
-            #elseif canImport(AppKit)
-            Image(nsImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .accessibilityLabel(title)
-            #endif
+            imageView
+                .scaleEffect(effectiveScale)
+                .gesture(
+                    MagnifyGesture()
+                        .onChanged { value in
+                            liveScale = value.magnification
+                        }
+                        .onEnded { value in
+                            currentScale = max(minScale, min(maxScale, currentScale * value.magnification))
+                            liveScale = 1.0
+                        }
+                )
+                .onTapGesture(count: 2) {
+                    withAnimation(.spring(duration: 0.3)) {
+                        currentScale = currentScale > 1.0 ? 1.0 : 2.0
+                    }
+                }
         }
         .background(Color.black)
+    }
+
+    @ViewBuilder
+    private var imageView: some View {
+        #if canImport(UIKit)
+        Image(uiImage: image)
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: .infinity)
+            .accessibilityLabel(title)
+        #elseif canImport(AppKit)
+        Image(nsImage: image)
+            .resizable()
+            .scaledToFit()
+            .frame(maxWidth: .infinity)
+            .accessibilityLabel(title)
+        #endif
     }
 }
 

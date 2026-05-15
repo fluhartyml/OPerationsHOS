@@ -55,7 +55,7 @@ struct VaultView: View {
         ContentUnavailableView {
             Label("Vault Locked", systemImage: "lock.shield.fill")
         } description: {
-            Text("Use Face ID or Touch ID to unlock the Vault. Contains private media, transcriptions, and secure notes.")
+            Text("Use Face ID or Touch ID to unlock the Vault. Contains private media, transcriptions, secure notes, and secure records.")
             if let authError {
                 Text(authError)
                     .font(.caption)

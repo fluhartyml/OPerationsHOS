@@ -84,7 +84,7 @@ struct SettingsView: View {
                 Text("AI actions (Summarize, Extract Dates, Suggest Category) call the Anthropic API directly using your key. Keys are stored in the iOS Keychain and never leave the device except as the Authorization header on requests to api.anthropic.com.")
             }
 
-            PermissionsSettingsView()
+            PermissionsSettingsView(store: store)
 
             Section("About") {
                 NavigationLink {
