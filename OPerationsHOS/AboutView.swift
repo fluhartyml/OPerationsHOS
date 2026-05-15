@@ -28,7 +28,7 @@ struct AboutView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    Text("A personal cognitive prosthetic. Capture anything you'd otherwise forget — reminders, events, projects, people, photos, receipts, notes — and recall it later through one Human OPerating System.")
+                    Text("Where the moving parts of your life — reminders, events, projects, people, photos, receipts, notes — become retrievable and structured. One Human OPerating System.")
                         .font(.body)
                         .foregroundStyle(.primary)
                 }

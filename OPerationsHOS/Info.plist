@@ -13,7 +13,7 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>OPerationsHOS uses Face ID to keep your Vault — private media and secure notes — accessible only to you.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>OPerationsHOS uses the camera to scan documents — receipts, business cards, paper records — into your cognitive prosthetic so they're searchable later.</string>
+	<string>OPerationsHOS uses the camera to scan documents — receipts, business cards, paper records — so they're searchable later.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
