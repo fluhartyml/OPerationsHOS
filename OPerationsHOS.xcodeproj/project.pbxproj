@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C01C04452FB67D7900393045 /* OPerationsHOSShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C01C043B2FB67D7900393045 /* OPerationsHOSShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0ACAFAE2FAAD9630062B2C2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAD2FAAD9630062B2C2 /* WidgetKit.framework */; };
 		C0ACAFB02FAAD9630062B2C2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0ACAFAF2FAAD9630062B2C2 /* SwiftUI.framework */; };
 		C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -15,6 +16,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C01C04432FB67D7900393045 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C0A3DE3B2FA94C2600B622CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C01C043A2FB67D7900393045;
+			remoteInfo = OPerationsHOSShare;
+		};
 		C0A3DE552FA94C2700B622CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C0A3DE3B2FA94C2600B622CF /* Project object */;
@@ -54,6 +62,7 @@
 			files = (
 				C0ACAFC12FAAD9640062B2C2 /* OPerationsHOSWidgetsExtension.appex in Embed Foundation Extensions */,
 				C0C3D8342FB66C3B00B80018 /* OPerationsHOSiMessage.appex in Embed Foundation Extensions */,
+				C01C04452FB67D7900393045 /* OPerationsHOSShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -61,6 +70,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C01C043B2FB67D7900393045 /* OPerationsHOSShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OPerationsHOSShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C082E4D62FAF768400ABA002 /* OPerationsHOSWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OPerationsHOSWidgetsExtension.entitlements; sourceTree = "<group>"; };
 		C0A3DE432FA94C2600B622CF /* OPerationsHOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OPerationsHOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A3DE542FA94C2700B622CF /* OPerationsHOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OPerationsHOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +83,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C01C04492FB67D7900393045 /* Exceptions for "OPerationsHOSShare" folder in "OPerationsHOSShare" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C01C043A2FB67D7900393045 /* OPerationsHOSShare */;
+		};
 		C0A3DE662FA94C2700B622CF /* Exceptions for "OPerationsHOS" folder in "OPerationsHOS" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -97,6 +114,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C01C043C2FB67D7900393045 /* OPerationsHOSShare */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C01C04492FB67D7900393045 /* Exceptions for "OPerationsHOSShare" folder in "OPerationsHOSShare" target */,
+			);
+			path = OPerationsHOSShare;
+			sourceTree = "<group>";
+		};
 		C0A3DE452FA94C2600B622CF /* OPerationsHOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -134,6 +159,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C01C04382FB67D7900393045 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0A3DE402FA94C2600B622CF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -184,6 +216,7 @@
 				C0A3DE612FA94C2700B622CF /* OPerationsHOSUITests */,
 				C0ACAFB12FAAD9630062B2C2 /* OPerationsHOSWidgets */,
 				C0C3D8292FB66C3A00B80018 /* OPerationsHOSiMessage */,
+				C01C043C2FB67D7900393045 /* OPerationsHOSShare */,
 				C0ACAFAC2FAAD9630062B2C2 /* Frameworks */,
 				C0A3DE442FA94C2600B622CF /* Products */,
 			);
@@ -197,6 +230,7 @@
 				C0A3DE5E2FA94C2700B622CF /* OPerationsHOSUITests.xctest */,
 				C0ACAFAB2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension.appex */,
 				C0C3D8262FB66C3A00B80018 /* OPerationsHOSiMessage.appex */,
+				C01C043B2FB67D7900393045 /* OPerationsHOSShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,6 +248,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C01C043A2FB67D7900393045 /* OPerationsHOSShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01C04482FB67D7900393045 /* Build configuration list for PBXNativeTarget "OPerationsHOSShare" */;
+			buildPhases = (
+				C01C04372FB67D7900393045 /* Sources */,
+				C01C04382FB67D7900393045 /* Frameworks */,
+				C01C04392FB67D7900393045 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C01C043C2FB67D7900393045 /* OPerationsHOSShare */,
+			);
+			name = OPerationsHOSShare;
+			packageProductDependencies = (
+			);
+			productName = OPerationsHOSShare;
+			productReference = C01C043B2FB67D7900393045 /* OPerationsHOSShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		C0A3DE422FA94C2600B622CF /* OPerationsHOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C0A3DE672FA94C2700B622CF /* Build configuration list for PBXNativeTarget "OPerationsHOS" */;
@@ -228,6 +284,7 @@
 			dependencies = (
 				C0ACAFC02FAAD9640062B2C2 /* PBXTargetDependency */,
 				C0C3D8332FB66C3B00B80018 /* PBXTargetDependency */,
+				C01C04442FB67D7900393045 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C0A3DE452FA94C2600B622CF /* OPerationsHOS */,
@@ -339,6 +396,9 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					C01C043A2FB67D7900393045 = {
+						CreatedOnToolsVersion = 26.4;
+					};
 					C0A3DE422FA94C2600B622CF = {
 						CreatedOnToolsVersion = 26.4;
 					};
@@ -377,11 +437,19 @@
 				C0A3DE5D2FA94C2700B622CF /* OPerationsHOSUITests */,
 				C0ACAFAA2FAAD9630062B2C2 /* OPerationsHOSWidgetsExtension */,
 				C0C3D8252FB66C3A00B80018 /* OPerationsHOSiMessage */,
+				C01C043A2FB67D7900393045 /* OPerationsHOSShare */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C01C04392FB67D7900393045 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0A3DE412FA94C2600B622CF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -420,6 +488,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C01C04372FB67D7900393045 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C0A3DE3F2FA94C2600B622CF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -458,6 +533,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C01C04442FB67D7900393045 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C01C043A2FB67D7900393045 /* OPerationsHOSShare */;
+			targetProxy = C01C04432FB67D7900393045 /* PBXContainerItemProxy */;
+		};
 		C0A3DE562FA94C2700B622CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C0A3DE422FA94C2600B622CF /* OPerationsHOS */;
@@ -481,6 +561,67 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		C01C04462FB67D7900393045 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X3F6UJ44H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OPerationsHOSShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OPerationsHOSShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ChatGPT.OPerationsHOS.OPerationsHOSShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C01C04472FB67D7900393045 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3X3F6UJ44H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OPerationsHOSShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OPerationsHOSShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ChatGPT.OPerationsHOS.OPerationsHOSShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		C0A3DE682FA94C2700B622CF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -862,6 +1003,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOSiMessage/OPerationsHOSiMessage.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
@@ -893,6 +1035,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				CODE_SIGN_ENTITLEMENTS = OPerationsHOSiMessage/OPerationsHOSiMessage.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3X3F6UJ44H;
@@ -924,6 +1067,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C01C04482FB67D7900393045 /* Build configuration list for PBXNativeTarget "OPerationsHOSShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01C04462FB67D7900393045 /* Debug */,
+				C01C04472FB67D7900393045 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C0A3DE3E2FA94C2600B622CF /* Build configuration list for PBXProject "OPerationsHOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
